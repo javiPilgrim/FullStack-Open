@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/spa
+    activate server
+    server-->>browser: 201 CREATED {"message":"note created"}
+    deactivate server
+
+
+
+    Note right of browser: The request made sends the new data in JSON format to the server. The server responds by creating the new data ("CREATED") and without the need to redirect.
