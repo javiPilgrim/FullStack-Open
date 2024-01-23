@@ -2,28 +2,23 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 
-const Header = (props) => {
+const Header = ({name}) => {
   return (
     <div>
-      <h1>
-        {props.name}
-      </h1>
+      <h1> {name} </h1>
     </div>
   )
 }
 
-const Part = (props) => {
+const Part = ({part, exercises}) => {
   return(
     <>
-      <p>
-        {props.part} {props.exercises}
-      </p>
+      <p> {part} {exercises} </p>
     </>
   )
 }
 
 const Content = (props) => {
-  console.log(props)
   return (
     <>
       <Part part = {props.part1} exercises = {props.exercises1} />
