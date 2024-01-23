@@ -1,7 +1,10 @@
 import { useState } from "react";
 
-const Statistic = (props) => {
-  if (props.total === 0) {
+
+// comoponent for creating all application statistics
+// if there are no statistics, just print: "no feedback given"
+const Statistic = ({total, good, neutral, bad, average, positive}) => {
+  if (total === 0) {
     return (
       <>
         <h3>No feedback given</h3>{" "}
@@ -11,24 +14,25 @@ const Statistic = (props) => {
   return (
     <>
 
-      <StatisticLine text="Good: " value={props.good} />
-      <StatisticLine text="Neutral: " value={props.neutral} />
-      <StatisticLine text="Bad: " value={props.bad} />
-      <StatisticLine text="Total: " value={props.total} />
-      <StatisticLine text="Average: " value={props.average} />
-      <StatisticLine text="Positive: " value={props.positive} />
+      <StatisticLine text="Good: " value={good} />
+      <StatisticLine text="Neutral: " value={neutral} />
+      <StatisticLine text="Bad: " value={bad} />
+      <StatisticLine text="Total: " value={total} />
+      <StatisticLine text="Average: " value={average} />
+      <StatisticLine text="Positive: " value={positive} />
     </>
   );
 };
 
-const StatisticLine = (props) => {
+// component for the creation of autonomous statistics lines
+const StatisticLine = ({value, text}) => {
   return (
     <>
       <table>
         <tbody>
         <tr>
-          <td style={{ width: '70px' }}>{props.text}</td>
-          <td>{props.value}</td>
+          <td style={{ width: '70px' }}>{text}</td> 
+          <td>{value}</td>
         </tr>
         </tbody>
       </table>
@@ -36,12 +40,13 @@ const StatisticLine = (props) => {
   );
 };
 
-const Button = (props) => {
+// component for creating application buttons
+const Button = ({click1, click2, click3, text1, text2, text3}) => {
   return (
     <>
-      <button onClick={props.click1}>{props.text1}</button>
-      <button onClick={props.click2}>{props.text2}</button>
-      <button onClick={props.click3}>{props.text3}</button>
+      <button onClick={click1}>{text1}</button>
+      <button onClick={click2}>{text2}</button>
+      <button onClick={click3}>{text3}</button>
     </>
   );
 };
@@ -54,6 +59,7 @@ const App = () => {
   const [average, setAverage] = useState(0);
   const [positive, setPositive] = useState(0);
 
+  // good button functionality
   const handleGoodClick = () => {
     const updateGood = good + 1;
     const updateTotal = total + 1;
@@ -68,6 +74,7 @@ const App = () => {
     console.log(updateGood, neutral, bad, updateTotal, newAverage);
   };
 
+  // neutral button functionality
   const handleNeutralClick = () => {
     const updateNeutral = neutral + 1;
     const updateTotal = total + 1;
@@ -82,6 +89,7 @@ const App = () => {
     console.log(good, updateNeutral, bad, updateTotal, newAverage);
   };
 
+  // bad button functionality
   const handleBadClick = () => {
     const updateBad = bad + 1;
     const updateTotal = total + 1;
