@@ -1,16 +1,16 @@
 import { useState } from 'react'
 
-const Display = (props) => {
+// component to print the anecdote on the screen
+const Display = ({anecdote}) => {
   return(
   <>
-    <p>{props.anecdote}</p>
+    <p>{anecdote}</p>
   </>
   )
 }
 
-
-
 const App = () => {
+  // Array composed of different anecdotes
   const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
@@ -22,25 +22,27 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
 
-
-
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState([ 0, 0, 0, 0, 0, 0, 0, 0 ])
+
+  // obtaining a random number and assigning this number to "selected"
   const nextAnecdote = () =>{
     let randomNum = Math.floor(Math.random() * anecdotes.length);
     setSelected(randomNum)
     console.log(randomNum)
   }
 
+  // Assignment of votes to anecdotes. The value of the anecdote within the array "copy" is
+  // increased by one and then we update the points value through "setPoint(copy)""
   const isVote = ()=> {
     const copy = [...points]
-    console.log(selected)
-    console.log("copy: ",copy)
     copy[selected] +=1
     console.log("copy modificated: ",copy)
     setPoints(copy)
     console.log("points: ", points)
   }
+
+  // functionality to obtain the maximum value of "points"
   const moreVotes = ()=>{
     const max = Math.max(...points);
     const index = points.indexOf(max);
