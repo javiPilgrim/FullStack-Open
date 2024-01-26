@@ -2,11 +2,13 @@ import Course from "./components/Course"
 
 const Courses = ({courses}) => {
   return(
-    courses.map((x,i)=>
-    <Course key = {i} course={x.name} parts={x.parts}/>
-    )
-  )
-}
+    <>
+      <h1>Web development curriculum</h1>
+      {courses.map((x,i)=>
+        <Course key = {i} course={x.name} parts={x.parts}/>
+      )}
+    </>
+  )}
 
 const App = () => {
   const courses = [
@@ -56,7 +58,6 @@ const App = () => {
 
   return (
     <div>
-      <h1>Web development curriculum</h1>
       <Courses courses={courses} />
     </div>
   )
