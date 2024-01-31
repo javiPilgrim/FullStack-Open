@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
 import Persons from './components/Persons';
-import axios from 'axios'
+import personService from './services/persons';
+
 
 
 
@@ -14,11 +15,11 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('')
 
   useEffect(()=>{
-    axios
-    .get('http://localhost:3001/persons')
-    .then(Response=>{
+    personService
+    .getAll()
+    .then(initialList=>{
       console.log('llega promesa')
-      setPersons(Response.data)
+      setPersons(initialList)
     })
   },[])
 
@@ -28,17 +29,20 @@ const App = () => {
       name: newName,
       number: newNumber
     };
-
+    
       const foundPerson = persons.find(person => person.name === nextPerson.name)
     if(foundPerson){
-      console.log("lo ha visto");
       alert(`${nextPerson.name} is already added on phonebook`);
       setNewName("");
       setNewNumber("");
     }else{
-      setPersons(persons.concat(nextPerson));
+    personService
+    .addPerson(nextPerson)
+    .then(retornedPerson=>{
+      setPersons(persons.concat(retornedPerson));
       setNewName("");
       setNewNumber("");
+    });
     }
   };
 
