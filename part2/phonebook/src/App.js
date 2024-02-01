@@ -18,7 +18,6 @@ const App = () => {
     personService
     .getAll()
     .then(initialList=>{
-      console.log('llega promesa')
       setPersons(initialList)
     })
   },[])
@@ -75,7 +74,17 @@ const App = () => {
   }
 
   const deleteButton = (i) => {
-    console.log(`Has borrado la etiqueta ${i}`)
+    const name = persons.filter(person => person.id === i)
+    console.log(name)
+    const result = window.confirm(`Do you want to delete ${name[0].name}`)
+    if(result){
+    personService
+    .deletePerson(i)
+    .then(personDelete =>{
+      console.log(personDelete)
+      setPersons(persons.filter(person => person.id !== i));
+    })
+  }
   }
 
   return (

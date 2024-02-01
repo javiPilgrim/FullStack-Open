@@ -6,16 +6,6 @@
       "id": "1"
     },
     {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": "2"
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": "3"
-    },
-    {
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
@@ -31,9 +21,9 @@
       "number": "654876"
     },
     {
-      "id": "91d2",
-      "name": "Miguel A Suarez",
-      "number": "873949437"
+      "id": "e4e0",
+      "name": "Carlos Cano",
+      "number": "423-234-234"
     }
   ]
 }
