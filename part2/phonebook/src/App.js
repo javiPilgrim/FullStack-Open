@@ -29,11 +29,22 @@ const App = () => {
       number: newNumber
     };
     
-      const foundPerson = persons.find(person => person.name === nextPerson.name)
+      const foundPerson = persons.find(person => person.name.toLowerCase() === nextPerson.name.toLowerCase())
     if(foundPerson){
-      alert(`${nextPerson.name} is already added on phonebook`);
+      const result = window.confirm(`${nextPerson.name} is already added on phonebook. replace the old number with a new one?`)
+      if(result){
+          console.log(`Foundperson: `, foundPerson, "nextperson: ", nextPerson)
+          personService
+          .update(foundPerson.id, nextPerson)
+          .then(changePerson=> {
+            setPersons(persons.map(person => person.id !== foundPerson.id ? person : changePerson))
+          })
+          setNewName("");
+          setNewNumber("");
+      }else{
       setNewName("");
       setNewNumber("");
+      }
     }else{
     personService
     .addPerson(nextPerson)
@@ -75,7 +86,6 @@ const App = () => {
 
   const deleteButton = (i) => {
     const name = persons.filter(person => person.id === i)
-    console.log(name)
     const result = window.confirm(`Do you want to delete ${name[0].name}`)
     if(result){
     personService
