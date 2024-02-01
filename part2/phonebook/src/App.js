@@ -52,6 +52,9 @@ const App = () => {
     )
     return personWith
   }
+  
+
+
 
   
   const handleSubmit = (event) => {
@@ -71,6 +74,10 @@ const App = () => {
     setNewSearch(event.target.value)
   }
 
+  const deleteButton = (i) => {
+    console.log(`Has borrado la etiqueta ${i}`)
+  }
+
   return (
     <div>
       <h1>Phonebook</h1>
@@ -82,7 +89,11 @@ const App = () => {
                   newNumber={newNumber}
                   handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <Persons filterList={nameFilter()} />
+      <ul>
+      {nameFilter().map((person,i) => (
+      <Persons  key={i} person={person} pressButton ={()=>deleteButton(person.id)} />
+      ))}
+      </ul>
     </div>
   );
 };
