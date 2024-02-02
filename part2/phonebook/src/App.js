@@ -3,7 +3,8 @@ import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
 import Persons from './components/Persons';
 import personService from './services/persons';
-
+import Notification from './components/Notificatioin';
+import './index.css'
 
 
 
@@ -13,12 +14,17 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [newSearch, setNewSearch] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+
 
   useEffect(()=>{
     personService
     .getAll()
     .then(initialList=>{
       setPersons(initialList)
+    })
+    .catch(error => {
+      console.log(error)
     })
   },[])
 
@@ -33,14 +39,24 @@ const App = () => {
     if(foundPerson){
       const result = window.confirm(`${nextPerson.name} is already added on phonebook. replace the old number with a new one?`)
       if(result){
-          console.log(`Foundperson: `, foundPerson, "nextperson: ", nextPerson)
           personService
           .update(foundPerson.id, nextPerson)
           .then(changePerson=> {
             setPersons(persons.map(person => person.id !== foundPerson.id ? person : changePerson))
           })
+          .catch(error=>{
+            setErrorMessage("ERROR: This record no longer appears on the server")
+            setPersons(persons.filter(person => person.id !== foundPerson.id));
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
           setNewName("");
           setNewNumber("");
+          setErrorMessage(`INFO: ${foundPerson.name} has changed the number on the phonebook`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
       }else{
       setNewName("");
       setNewNumber("");
@@ -50,9 +66,13 @@ const App = () => {
     .addPerson(nextPerson)
     .then(retornedPerson=>{
       setPersons(persons.concat(retornedPerson));
+      setErrorMessage(`INFO: ${nextPerson.name} has been added to the phonebook`)
+      setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
       setNewName("");
       setNewNumber("");
-    });
+    })
     }
   };
 
@@ -93,6 +113,16 @@ const App = () => {
     .then(personDelete =>{
       console.log(personDelete)
       setPersons(persons.filter(person => person.id !== i));
+      setErrorMessage(`INFO: ${personDelete.name} has been deleted from the phonebook`)
+      setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+    })
+    .catch(error=>{setErrorMessage("ERROR: This record no longer appears on the server")
+    setPersons(persons.filter(person => person.id !== i));
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
     })
   }
   }
@@ -107,6 +137,7 @@ const App = () => {
                   handleNameChange={handleNameChange}
                   newNumber={newNumber}
                   handleNumberChange={handleNumberChange} />
+      <Notification message={errorMessage} />
       <h2>Numbers</h2>
       <ul>
       {nameFilter().map((person,i) => (
