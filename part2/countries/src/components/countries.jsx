@@ -1,4 +1,4 @@
-import Country from './components/country'
+import Country from "./country";
 
 const Countries = ({ countries, handle, showCountry}) => {
     return (
@@ -13,6 +13,7 @@ const Countries = ({ countries, handle, showCountry}) => {
                 {showCountry === pais.name.common ? (
                 <Country
                   name={pais.name.common}
+                  official={pais.name.official}
                   capital={pais.capital}
                   population={pais.population}
                   languages={pais.languages}
