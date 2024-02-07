@@ -6,12 +6,13 @@ import axios from 'axios'
 const TotalWeather = ({capital}) =>{
 
 const [weather, setWeather] = useState([])
-const api_key = import.meta.env.VITE_REACT_APP_API_KEY;
+const api_key = import.meta.env.VITE_SOME_KEY;
+
 
 
 useEffect(() => {
     axios
-      .get(`https://www.meteosource.com/api/v1/free/point?place_id=${capital}&sections=current%2Chourly&timezone=auto&language=en&units=auto&key=i83rb8re5vzyr3x70p3gm2h04w4msihaimw5ibqd`)
+      .get(`https://www.meteosource.com/api/v1/free/point?place_id=${capital}&sections=current%2Chourly&timezone=auto&language=en&units=auto&key=${api_key}`)
       .then((response) => {
         setWeather(response.data.current)
       })
