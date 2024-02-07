@@ -1,4 +1,5 @@
 import Country from "./country";
+import TotalWeather from "./weather"
 
 const Countries = ({ countries, handle, showCountry}) => {
     return (
@@ -26,6 +27,7 @@ const Countries = ({ countries, handle, showCountry}) => {
             ))
           ))}
         {countries.length === 1 && (
+          <>
           <Country
             name={countries['0'].name.common}
             official = {countries['0'].name.official}
@@ -34,8 +36,9 @@ const Countries = ({ countries, handle, showCountry}) => {
             languages = {countries['0'].languages}
             src={countries['0'].flags.png}
             alt={countries['0'].flags.alt}
-  
           />
+          <TotalWeather capital={countries['0'].capital} />
+        </>
         )}
       </>
     );
