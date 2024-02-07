@@ -13,12 +13,10 @@ useEffect(() => {
     axios
       .get(`https://www.meteosource.com/api/v1/free/point?place_id=${capital}&sections=current%2Chourly&timezone=auto&language=en&units=auto&key=i83rb8re5vzyr3x70p3gm2h04w4msihaimw5ibqd`)
       .then((response) => {
-        console.log(response.data.current)
         setWeather(response.data.current)
       })
       .catch(error=>{
         console.log('fali: ', error)
-        console.log(weather)
       })
     }, [])
 
