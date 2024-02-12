@@ -1,7 +1,10 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
 app.use(express.json())
+app.use(morgan('tiny'))
+
 
 let now = new Date()
 
@@ -10,6 +13,8 @@ const newId = () => {
   const ids = persons.map(person => person.id)
   return ids.includes(numberRandom)? newId() : numberRandom
 };
+
+
 
 let persons = [
     { 
