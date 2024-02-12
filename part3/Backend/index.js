@@ -1,7 +1,15 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let now = new Date()
+
+const newId = () => {
+  const numberRandom = Math.floor(Math.random() * 10000) + 1;
+  const ids = persons.map(person => person.id)
+  return ids.includes(numberRandom)? newId() : numberRandom
+};
 
 let persons = [
     { 
@@ -41,6 +49,34 @@ app.get('/api/persons/:id', (request, response) => {
 app.get("/api/persons", (request, response)=>{
     response.send(persons)
 })
+
+app.post('/api/persons', (request, response) => {
+  const person = request.body
+  const names = persons.map(person=> person.name.toLowerCase())
+
+  if(!person.name || person.name === ""){
+    return response.status(400).json({
+      error: 'name missing'
+    })
+  }
+
+  if(!person.number || person.number === ""){
+    return response.status(400).json({
+      error: 'number missing'
+    })
+  }
+
+  if(names.includes(person.name.toLowerCase())){
+    return response.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+
+  person.id = newId()
+  persons = persons.concat(person)
+  response.json(person)
+})
+
 
 app.delete('/api/persons/:id', (request, response) =>{
   const id = Number(request.params.id)
