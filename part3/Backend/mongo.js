@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
 
-if (process.argv.length<5) {
-  console.log('Usage: node mongo.js <password> <name> <number>')
-  process.exit(1)
+if (process.argv.length<3) {
+    console.log('usage: node mongo.js <password> or node mongo.js <password> <name> <number>')
 }
 
 
@@ -24,7 +23,7 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-
+if(name && number){
 const person = new Person({
   name: name,
   number: number,
@@ -34,3 +33,14 @@ person.save().then(result => {
   console.log(`Added ${name} with number: ${number} to phonebook`)
   mongoose.connection.close()
 })
+
+}else{
+
+Person.find({}).then(result => {
+  console.log('phonebook: ')
+  result.forEach(person => {
+    console.log(`${person.name} ${person.number}`)
+  })
+  mongoose.connection.close()
+})
+}
