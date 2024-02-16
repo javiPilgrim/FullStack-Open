@@ -1,16 +1,25 @@
 
 
-const Notification = ({ message }) => {
+const Notification = ({ info }) => {
+  if (!info.message) {
+    return
+  }
 
-    if (message === null) {
-      return null
-    }
-    const className = message.includes("INFO") ? "confirmation" : "error";
-    return (
-      <div className={className}>
-        {message}
-      </div>
-    );
-  };
+  const style = {
+    color: info.type==='error' ? 'red' : 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
 
-  export default Notification
+  return (
+    <div style={style}>
+      {info.message}
+    </div>
+  )
+}
+
+export default Notification

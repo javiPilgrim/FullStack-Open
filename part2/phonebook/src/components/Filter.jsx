@@ -1,12 +1,11 @@
-import React from 'react';
-
-
-const Filter = ({newSearch, handleFilterChange}) => {
-  return(
-    <>
-       filter shown with: <input value={newSearch} onChange={handleFilterChange} />
-    </>
+const Filter = ({ filter, setFilter}) => {
+  return (
+    <div>
+      filter shown with
+      <input value={filter} onChange={({ target }) => setFilter(target.value)} />
+    </div>
   )
 }
+
 
 export default Filter
