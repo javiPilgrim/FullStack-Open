@@ -2,13 +2,36 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
 
+
+const password = process.argv[2]
+
+const url =
+  `mongodb+srv://javipilgrim:${password}@cluster1.f5s3qfz.mongodb.net/phonebook?retryWrites=true&w=majority`
+
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
 app.use(express.json())
 app.use(express.static('dist'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'));
 morgan.token('req-body', (req) => JSON.stringify(req.body));
 app.use(cors())
 
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+})
+
+personSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+const Person = mongoose.model('Person', personSchema)
 
 let now = new Date()
 
@@ -56,7 +79,9 @@ app.get('/api/persons/:id', (request, response) => {
 
 
 app.get("/api/persons", (request, response)=>{
-    response.send(persons)
+  Person.find({}).then(person => {
+  response.json(person)
+  })
 })
 
 app.post('/api/persons', (request, response) => {
