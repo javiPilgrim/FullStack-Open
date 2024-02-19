@@ -6,26 +6,16 @@ const cors = require('cors')
 const Person = require('./models/person')
 
 
-const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method)
-  console.log('Path:  ', request.path)
-  console.log('Body:  ', request.body)
-  console.log('---')
-  next()
-}
-
 
 app.use(express.json())
 app.use(express.static('dist'))
-//app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'));
-//morgan.token('req-body', (req) => JSON.stringify(req.body));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'));
+morgan.token('req-body', (req) => JSON.stringify(req.body));
 app.use(cors())
-app.use(requestLogger)
 
-const password = process.argv[2]
+
+
 let now = new Date()
-const url =
-  `mongodb+srv://javipilgrim:${password}@cluster1.f5s3qfz.mongodb.net/phonebook?retryWrites=true&w=majority`
 
 const newId = () => {
   const numberRandom = Math.floor(Math.random() * 10000) + 1;
