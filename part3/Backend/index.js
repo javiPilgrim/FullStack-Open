@@ -6,11 +6,21 @@ const cors = require('cors')
 const Person = require('./models/person')
 
 
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+
 app.use(express.json())
 app.use(express.static('dist'))
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'));
-morgan.token('req-body', (req) => JSON.stringify(req.body));
+//app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'));
+//morgan.token('req-body', (req) => JSON.stringify(req.body));
 app.use(cors())
+app.use(requestLogger)
 
 const password = process.argv[2]
 let now = new Date()
@@ -72,7 +82,7 @@ app.post('/api/persons', (request, response) => {
   const body = request.body
   console.log(body)
 
-  if (body.content === undefined) {
+  if (body.name === undefined) {
     return response.status(400).json({ error: 'content missing' })
   }
 
@@ -81,7 +91,7 @@ app.post('/api/persons', (request, response) => {
     number: body.number
   })
 
-  note.save().then(savedPerson => {
+  person.save().then(savedPerson => {
     console.log("Person saved!!")
     response.json(savedPerson)
   })
@@ -94,7 +104,7 @@ app.delete('/api/persons/:id', (request, response) =>{
   response.status(204).end()
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
