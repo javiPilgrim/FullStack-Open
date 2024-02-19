@@ -48,9 +48,10 @@ let persons = [
     }
 ]
 app.get("/info",(request, response)=>{
+  Person.find({}).then(persons => {
     response.send(`<p>Phone has info for ${persons.length} people</p>
     <p>${now}</p>`)
-})
+})})
 
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
