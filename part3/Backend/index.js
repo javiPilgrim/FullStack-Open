@@ -1,8 +1,10 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
+const Person = require('./models/person')
+
 
 app.use(express.json())
 app.use(express.static('dist'))
@@ -14,24 +16,6 @@ const password = process.argv[2]
 let now = new Date()
 const url =
   `mongodb+srv://javipilgrim:${password}@cluster1.f5s3qfz.mongodb.net/phonebook?retryWrites=true&w=majority`
-
-mongoose.set('strictQuery',false)
-mongoose.connect(url)
-
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
-
-personSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
-
-const Person = mongoose.model('Person', personSchema)
 
 const newId = () => {
   const numberRandom = Math.floor(Math.random() * 10000) + 1;
@@ -64,9 +48,10 @@ let persons = [
     }
 ]
 app.get("/info",(request, response)=>{
+  Person.find({}).then(persons => {
     response.send(`<p>Phone has info for ${persons.length} people</p>
     <p>${now}</p>`)
-})
+})})
 
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
@@ -85,7 +70,10 @@ app.get("/api/persons", (request, response)=>{
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
+<<<<<<< HEAD
   console.log(body)
+=======
+>>>>>>> f6f0d8ee5d4b723ffb7d558a5366a320199fe764
 
   if (body.content === undefined) {
     return response.status(400).json({ error: 'content missing' })
@@ -93,12 +81,20 @@ app.post('/api/persons', (request, response) => {
 
   const person = new Person({
     name: body.name,
+<<<<<<< HEAD
     number: body.number
   })
 
   note.save().then(savedPerson => {
     console.log("Person saved!!")
     response.json(savedPerson)
+=======
+    number: body.number,
+  })
+
+  person.save().then(savedNote => {
+    response.json(savedNote)
+>>>>>>> f6f0d8ee5d4b723ffb7d558a5366a320199fe764
   })
 })
 
