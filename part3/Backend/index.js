@@ -70,10 +70,7 @@ app.get("/api/persons", (request, response)=>{
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-<<<<<<< HEAD
   console.log(body)
-=======
->>>>>>> f6f0d8ee5d4b723ffb7d558a5366a320199fe764
 
   if (body.content === undefined) {
     return response.status(400).json({ error: 'content missing' })
@@ -81,20 +78,12 @@ app.post('/api/persons', (request, response) => {
 
   const person = new Person({
     name: body.name,
-<<<<<<< HEAD
     number: body.number
   })
 
   note.save().then(savedPerson => {
     console.log("Person saved!!")
     response.json(savedPerson)
-=======
-    number: body.number,
-  })
-
-  person.save().then(savedNote => {
-    response.json(savedNote)
->>>>>>> f6f0d8ee5d4b723ffb7d558a5366a320199fe764
   })
 })
 
