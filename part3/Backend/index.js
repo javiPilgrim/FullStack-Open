@@ -84,30 +84,22 @@ app.get("/api/persons", (request, response)=>{
 })
 
 app.post('/api/persons', (request, response) => {
-  const person = request.body
-  const names = persons.map(person=> person.name.toLowerCase())
+  const body = request.body
+  console.log(body)
 
-  if(!person.name || person.name === ""){
-    return response.status(400).json({
-      error: 'name missing'
-    })
+  if (body.content === undefined) {
+    return response.status(400).json({ error: 'content missing' })
   }
 
-  if(!person.number || person.number === ""){
-    return response.status(400).json({
-      error: 'number missing'
-    })
-  }
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  })
 
-  if(names.includes(person.name.toLowerCase())){
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
-
-  person.id = newId()
-  persons = persons.concat(person)
-  response.json(person)
+  note.save().then(savedPerson => {
+    console.log("Person saved!!")
+    response.json(savedPerson)
+  })
 })
 
 
