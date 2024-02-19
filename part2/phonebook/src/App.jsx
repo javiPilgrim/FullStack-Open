@@ -53,16 +53,12 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-
-  
-
     const person = persons.find(p => p.name === newName)
 
     if (person) {
       updatePerson(person)
       return
     }
-    
 
     personService.create({
       name: newName,
