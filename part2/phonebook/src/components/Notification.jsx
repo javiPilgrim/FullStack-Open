@@ -1,5 +1,4 @@
 
-
 const Notification = ({ info }) => {
   if (!info.message) {
     return
