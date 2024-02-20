@@ -71,6 +71,10 @@ const App = () => {
 
       cleanForm()
     })
+    .catch(error=>{
+      console.log(error.response.data.error)
+      notifyWith(error.response.data.error)
+    })
   }
 
   const removePerson = (person) => {
