@@ -20,7 +20,16 @@ mongoose.connect(url)
       minLength: 3,
       required: true
     },
-    number: String,
+    number:  {
+      type: String,
+      validate: {
+        validator: function (value) {
+          // Verifica si el número cumple con el formato deseado
+          const pattern = /^\d{2,3}-\d{6,}$/;
+          return pattern.test(value);
+        }
+      }
+    }
   })
   
   personSchema.set('toJSON', {
