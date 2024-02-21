@@ -34,6 +34,7 @@ app.get('/info',(request, response) => {
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
     .then(person => {
+      console.log(person)
       if (person) {
         response.json(person)
       } else {
