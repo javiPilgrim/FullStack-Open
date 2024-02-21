@@ -7,26 +7,29 @@ const Person = require('./models/person')
 
 app.use(express.static('dist'))
 app.use(express.json())
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'));
-morgan.token('req-body', (req) => JSON.stringify(req.body));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'))
+morgan.token('req-body', (req) => JSON.stringify(req.body))
 app.use(cors())
 
 
 
 let now = new Date()
 
+/* assigning id to notes from a previous moment in the process
+
 const newId = () => {
   const numberRandom = Math.floor(Math.random() * 10000) + 1;
   const ids = persons.map(person => person.id)
   return ids.includes(numberRandom)? newId() : numberRandom
 };
+*/
 
 
-app.get("/info",(request, response)=>{
+app.get('/info',(request, response) => {
   Person.find({}).then(persons => {
     response.send(`<p>Phone has info for ${persons.length} people</p>
     <p>${now}</p>`)
-})})
+  })})
 
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
@@ -41,7 +44,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 
-app.get("/api/persons", (request, response)=>{
+app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons)
     console.log(typeof(persons), persons)
@@ -62,18 +65,18 @@ app.post('/api/persons', (request, response, next) => {
   })
 
   person.save().then(savedPerson => {
-    console.log("Person saved!!")
+    console.log('Person saved!!')
     response.json(savedPerson)
   })
-  .catch(error=>next(error))
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
 
   Person.findByIdAndUpdate(request.params.id,
-    { name, number }, 
-     { new: true, runValidators: true, context: 'query' })
+    { name, number },
+    { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -84,6 +87,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => {
+      console.log(result)
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -104,7 +108,6 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
-  
   if(error.number === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
