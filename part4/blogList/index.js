@@ -1,25 +1,10 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
+const Blog = require('./models/blog')
 
-const password = 'mongopilgrim'
-
-const url =
-`mongodb+srv://javimacias:${password}@cluster1.f5s3qfz.mongodb.net/blogsList?retryWrites=true&w=majority&appName=Cluster1`
-
-const blogSchema = new mongoose.Schema({
-    title: String,
-    author: String,
-    url: String,
-    likes: Number
-  })
-
-const Blog = mongoose.model('Blog', blogSchema)
-
-const mongoUrl =`mongodb+srv://javimacias:mongopilgrim@cluster2.nq61d1f.mongodb.net/blogsList?retryWrites=true&w=majority&appName=Cluster2`
-
-mongoose.connect(mongoUrl)
 
 
 app.use(cors())
@@ -34,7 +19,7 @@ app.get('/api/blogs', (request, response) => {
     })
 })
 
-app.post('/api/blogs', (request, response) => {
+app.post('/api/blogs', (request, response, next) => {
     const blog = new Blog(request.body)
   
     blog
@@ -42,9 +27,31 @@ app.post('/api/blogs', (request, response) => {
       .then(result => {
         response.status(201).json(result)
       })
+      .catch(error => next(error))
   })
 
+  const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
+  
+  // controlador de solicitudes con endpoint desconocido
+  app.use(unknownEndpoint)
 
+  const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+  
+    if (error.title === 'ValidationError'  || 
+        error.author === 'ValidationError' || 
+        error.url === 'ValidationError'    || 
+        error.likes === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
+    }
+
+    next(error)
+  }
+  
+  // este debe ser el último middleware cargado
+  app.use(errorHandler)
 
 const PORT = process.env.PORT || 3003
 app.listen(PORT, () => {
