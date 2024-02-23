@@ -5,9 +5,24 @@ const dummy = (blogs) => {
 
 const totalLikes = (blogs) => {
     const reducer = (accumulator, currentValue) => accumulator + currentValue.likes
-    return blogs.reduce(reducer, 0)
+    return blogs.legth === 0
+    ? 0
+    : blogs.reduce(reducer, 0)
   }
+
+  const favoriteBlog = (blogs) => {
+    if (blogs.length === 0) {
+      return 0
+    }
+  
+    // Usamos reduce para encontrar el blog con más "likes"
+    const mostLikedBlog = blogs.reduce((maxLikesBlog, currentBlog) => {
+      return currentBlog.likes > maxLikesBlog.likes ? currentBlog : maxLikesBlog;
+    }, blogs[0]);
+  
+    return mostLikedBlog;
+  };
   
   module.exports = {
-    dummy, totalLikes
+    dummy, totalLikes, favoriteBlog
   }
