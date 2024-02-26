@@ -1,4 +1,4 @@
-describe('favorite Blog', () => {
+describe('most likes blog', () => {
     const listHelper = require('../utils/list_helper')
     
     const withOneBlog = [
@@ -45,33 +45,28 @@ describe('favorite Blog', () => {
 
         const emptyList = []
   
-    test('when list has only one blog, equals the likes of that', () => {
-      const result = listHelper.favoriteBlog(withOneBlog)
+    test('when list has only one blog, equals the likes of that author and likes', () => {
+      const result = listHelper.mostLikes(withOneBlog)
       expect(result).toEqual({
-        _id: '5a422aa71b54a676234d17f8',
-        title: 'Go To Statement Considered Harmful',
         author: 'Edsger W. Dijkstra',
-        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
-        likes: 5,
-        __v: 0
+        likes: 5
       })
-
+      console.log(result)
     })
 
-    test('when list has multiple blogs, equals to the blog with the most likes', () => {
-        const result = listHelper.favoriteBlog(multipleBlogs)
+    
+    test('when list has multiple blogs, equals to the most likes author and likes number', () => {
+        const result = listHelper.mostLikes(multipleBlogs)
         expect(result).toEqual({
-            title: "Vacas locas",
-            author: "Grijander",
-            url: "http://www.vacaslocas.com",
-            likes: 2233,
-            id: "65d86354f46ea19939fca53b"
-            })
+            author: 'Grijander',
+            likes: 2255
+          })
   })
 
     test('when blogs list is empty, equals 0', () => {
-        const result =  listHelper.favoriteBlog(emptyList)
+        const result =  listHelper.mostLikes(emptyList)
         expect(result).toBe(0)
+        console.log("if it is empty equal 0")
     })
 
 })
