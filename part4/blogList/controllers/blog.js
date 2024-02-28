@@ -10,8 +10,14 @@ blogRouter.get('/', (request, response) => {
   })
   
   blogRouter.post('/', (request, response, next) => {
+
+      const { title, url } = request.body;
+
+      if (!title || !url) {
+        // Si falta el título o la URL, responde con estado 400
+        return response.status(400).json({ error: 'Title and URL are required' });
+      }
       const blog = new Blog(request.body)
-    
       blog
         .save()
         .then(result => {

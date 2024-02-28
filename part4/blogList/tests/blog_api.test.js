@@ -87,6 +87,20 @@ test('property likes has 0 by default', async() => {
   expect(body.likes).toBe(0)
 })
 
+test('when there is no title or url it responds 400 bad resquest', async() => {
+  const newBlog = {
+    author: "Enmedio",
+    likes: 435
+  }
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(400)
+})
+
+
+
 
 
 afterAll(() => {
