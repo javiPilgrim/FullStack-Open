@@ -47,7 +47,44 @@ test('all blogs have id property', async() => {
   const body = response.body
   body.forEach(blog => {
     expect(blog.id).toBeDefined()
-  });
+  })
+})
+
+test('when make a POST the number blogs increase by one', async() => {
+  const newBlog = {
+    title: "Los jueves",
+    author: "Enmedio",
+    url: "http://www.semanita.com",
+    likes: 20
+  }
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(201)
+  .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  expect(response.body).toHaveLength(initialBlogs.length + 1)
+})
+
+test('property likes has 0 by default', async() => {
+  const newBlog = {
+    title: "Los jueves",
+    author: "Enmedio",
+    url: "http://www.semanita.com"
+  }
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(201)
+  .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+  const body = response.body[2]
+  expect(body.likes).toBe(0)
 })
 
 

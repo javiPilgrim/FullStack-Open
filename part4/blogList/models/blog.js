@@ -32,7 +32,8 @@ mongoose.connect(url)
     },
     likes: {
         type: Number,
-        required: true
+        default: 0
+        
     }
   })
 
