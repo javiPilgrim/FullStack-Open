@@ -99,8 +99,26 @@ test('when there is no title or url it responds 400 bad resquest', async() => {
   .expect(400)
 })
 
+test('succeeds with status code 204 if id is valid', async () => {
+  const result = await api.get('/api/blogs')
+  const blogAtStart = result.body
 
+  const blogToDelete = blogAtStart[0]
 
+  await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+  const corpFinal = await api.get('/api/blogs')
+  const blogsAtEnd = corpFinal.body
+
+  expect(blogsAtEnd).toHaveLength(
+      blogAtStart.length - 1
+  )
+
+  const contents = blogsAtEnd.map(r => r.id)
+  expect(contents).not.toContain(blogToDelete.id)
+})
 
 
 afterAll(() => {
