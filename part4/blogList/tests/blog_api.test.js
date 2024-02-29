@@ -29,7 +29,7 @@ beforeEach(async () => {
 })
 
 
-
+describe('when there is initially some blogs saved', () => {
 test('blogs are returned as json', async () => {
   await api
     .get('/api/blogs')
@@ -49,7 +49,9 @@ test('all blogs have id property', async() => {
     expect(blog.id).toBeDefined()
   })
 })
+})
 
+describe('viewing possible errors in new blogs', () => {
 test('when make a POST the number blogs increase by one', async() => {
   const newBlog = {
     title: "Los jueves",
@@ -98,8 +100,10 @@ test('when there is no title or url it responds 400 bad resquest', async() => {
   .send(newBlog)
   .expect(400)
 })
+})
 
-test('succeeds with status code 204 if id is valid', async () => {
+describe('deleting and modifying blogs', () => {
+test('success with status code 204 if it is valid', async () => {
   const result = await api.get('/api/blogs')
   const blogAtStart = result.body
 
@@ -120,6 +124,28 @@ test('succeeds with status code 204 if id is valid', async () => {
   expect(contents).not.toContain(blogToDelete.id)
 })
 
+test('success changing the likes of a blog through its Id', async () => {
+  const result = await api.get('/api/blogs')
+  const blogAtStart = result.body
+
+  const blogToChange = {
+    id: blogAtStart[0].id,
+    title: blogAtStart[0].title,
+    author: blogAtStart[0].author,
+    url: blogAtStart[0].url,
+    likes: 44
+  }
+  await api
+      .put(`/api/blogs/${blogToChange.id}`)
+      .send(blogToChange)
+      .expect('Content-Type', /application\/json/)
+
+  const corpFinal = await api.get('/api/blogs')
+  const blogsAtEnd = corpFinal.body
+
+  expect(blogsAtEnd[0].likes).toBe(44)
+})
+})
 
 afterAll(() => {
   mongoose.connection.close()
