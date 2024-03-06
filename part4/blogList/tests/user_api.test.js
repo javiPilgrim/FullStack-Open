@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const supertest = require('supertest')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
@@ -18,13 +19,14 @@ const api = supertest(app)
         await user.save()
     })
 
+    describe('when there is initially some blogs saved', () => {
     test('creation succeeds with a fresh username', async () => {
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
-            username: 'mluukkai',
-            name: 'Matti Luukkainen',
-            password: 'salainen',
+            username: 'Ana',
+            name: 'Mato',
+            password: 'Anamato',
         }
 
         await api
@@ -39,12 +41,12 @@ const api = supertest(app)
         const usernames = usersAtEnd.map(u => u.username)
         expect(usernames).toContain(newUser.username)
     })
-/*
-    test('creation fails with proper statuscode and message if username already taken', async () => {
+
+    test('creation fails with proper statuscode and message if username is short', async () => {
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
-            username: 'root',
+            username: 'ro',
             name: 'Superuser',
             password: 'salainen',
         }
@@ -55,11 +57,50 @@ const api = supertest(app)
             .expect(400)
             .expect('Content-Type', /application\/json/)
 
-        expect(result.body.error).toContain('expected `username` to be unique')
+        expect(result.body.error).toContain('username and password must have at least three characters')
 
         const usersAtEnd = await helper.usersInDb()
         expect(usersAtEnd).toEqual(usersAtStart)
     })
-    */
+    test('creation fails with proper statuscode and message if password no exist', async () => {
+        const usersAtStart = await helper.usersInDb()
 
+        const newUser = {
+            username: 'Ramon',
+            name: 'Ramon Carrasco',
+            password: '',
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toContain('username and password are required')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toEqual(usersAtStart)
+    })
+
+    test('creation fails with proper statuscode if username is repeat', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'root',
+            name: 'Otra vez',
+            password: 'anonimo',
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+            const usersAtEnd = await helper.usersInDb()
+            expect(usersAtEnd).toEqual(usersAtStart)
+    })
+    
+})
 
