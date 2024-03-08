@@ -7,16 +7,17 @@ const app = require('../app')
 const api = supertest(app)
 
 
-
-
-
     beforeEach(async () => {
         await User.deleteMany({})
 
-        const passwordHash = await bcrypt.hash('sekret', 10)
-        const user = new User({ username: 'root', passwordHash })
-
+        let passwordHash = await bcrypt.hash('sekret', 10)
+        let user = new User({ username: 'root', passwordHash })
         await user.save()
+
+        passwordHash = await bcrypt.hash('Lucas', 10)
+        user = new User({ username: 'Lucas', passwordHash })
+        await user.save()
+
     })
 
     describe('when there is initially some blogs saved', () => {
@@ -24,9 +25,9 @@ const api = supertest(app)
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
-            username: 'Ana',
-            name: 'Mato',
-            password: 'Anamato',
+            username: 'Anabel',
+            name: 'Anabel Mato',
+            password: 'Anabel',
         }
 
         await api

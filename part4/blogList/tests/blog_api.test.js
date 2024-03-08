@@ -4,18 +4,22 @@ const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
 
+jest.setTimeout(10000)
+
 const initialBlogs = [
   {
     title: "Los chorizos",
     author: "Barcenas",
     url: "http://www.barci.com",
-    likes: 1123
+    likes: 1123,
+    user: '65e9951b094c3a03d596d801'
   },
   {
     title: "Los amigos",
     author: "pepe",
     url: "http://www.losamigos.com",
     likes: 123
+    
   }
 ]
 
@@ -26,7 +30,6 @@ beforeEach(async () => {
   blogObject = new Blog(initialBlogs[1])
   await blogObject.save()
 })
-
 
 describe('when there is initially some blogs saved', () => {
 test('blogs are returned as json', async () => {
@@ -51,24 +54,52 @@ test('all blogs have id property', async() => {
 })
 
 describe('viewing possible errors in new blogs', () => {
-test('when make a POST the number blogs increase by one', async() => {
-  const newBlog = {
-    title: "Los jueves",
-    author: "Enmedio",
-    url: "http://www.semanita.com",
-    likes: 20
-  }
+  test('verify that HTTP POST creates a blog post', async () => {
 
-  await api
-  .post('/api/blogs')
-  .send(newBlog)
-  .expect(201)
-  .expect('Content-Type', /application\/json/)
+    const newBlogPost = {
+      "title": "Perestroika",
+      "author": "Hurtado",
+      "url": 'www.apertura.com',
+      "likes": 2994,
+      "user": '65e9951b094c3a03d596d801'
+    }
 
-  const response = await api.get('/api/blogs')
+    const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFuZHJlcyIsImlkIjoiNjVlOTk1MWIwOTRjM2EwM2Q1OTZkODAxIiwiaWF0IjoxNzA5ODkwOTE2fQ.cbtIbEqLU5fvefHbO-3gUFnlN7BkvyvpCXxyREJJkLc'
+    
+    await api
+      .post('/api/blogs')
+      .send(newBlogPost)
+      .set('Authorization', `Bearer ${userToken}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+  
+    const result = await api.get('/api/blogs')
+    blogsAtEnd = result.body
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+  })
 
-  expect(response.body).toHaveLength(initialBlogs.length + 1)
-})
+  test('if Post does not have the appropriate authorization responds 401: "Unauthorized"', async () => {
+
+    const newBlogPost = {
+      "title": "Ajo y Agua",
+      "author": "Pepe Salamino",
+      "url": 'www.comidas.com',
+      "likes": 8789,
+      "user": "65e5afba2e71265ab8757ea9"
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlogPost)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+  const result = await api.get('/api/blogs')
+  blogsAtEnd = result.body
+  expect(blogsAtEnd).toHaveLength(initialBlogs.length)
+  
+
+  })
 
 test('property likes has 0 by default', async() => {
   const newBlog = {
@@ -76,10 +107,12 @@ test('property likes has 0 by default', async() => {
     author: "Enmedio",
     url: "http://www.semanita.com"
   }
+  const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFuZHJlcyIsImlkIjoiNjVlOTk1MWIwOTRjM2EwM2Q1OTZkODAxIiwiaWF0IjoxNzA5ODkwOTE2fQ.cbtIbEqLU5fvefHbO-3gUFnlN7BkvyvpCXxyREJJkLc'
 
   await api
   .post('/api/blogs')
   .send(newBlog)
+  .set('Authorization', `Bearer ${userToken}`)
   .expect(201)
   .expect('Content-Type', /application\/json/)
 
@@ -93,10 +126,13 @@ test('when there is no title or url it responds 400 bad resquest', async() => {
     author: "Enmedio",
     likes: 435
   }
+  const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFuZHJlcyIsImlkIjoiNjVlOTk1MWIwOTRjM2EwM2Q1OTZkODAxIiwiaWF0IjoxNzA5ODkwOTE2fQ.cbtIbEqLU5fvefHbO-3gUFnlN7BkvyvpCXxyREJJkLc'
+
 
   await api
   .post('/api/blogs')
   .send(newBlog)
+  .set('Authorization', `Bearer ${userToken}`)
   .expect(400)
 })
 })
@@ -105,11 +141,12 @@ describe('deleting and modifying blogs', () => {
 test('success with status code 204 if it is valid', async () => {
   const result = await api.get('/api/blogs')
   const blogAtStart = result.body
-
   const blogToDelete = blogAtStart[0]
+  const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFuZHJlcyIsImlkIjoiNjVlOTk1MWIwOTRjM2EwM2Q1OTZkODAxIiwiaWF0IjoxNzA5ODkwOTE2fQ.cbtIbEqLU5fvefHbO-3gUFnlN7BkvyvpCXxyREJJkLc'
 
   await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${userToken}`)
       .expect(204)
 
   const corpFinal = await api.get('/api/blogs')
