@@ -1,12 +1,15 @@
+import './index.css'
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Login from './components/Login'
+import Notification from './components/Notification'
 import loginService from './services/login'
 import CreateBlog from './components/CreateBlog'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
@@ -51,10 +54,6 @@ const App = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    console.log('He hecho el formulario')
-    console.log(`Title: ${title} 
-    Author: ${author} 
-    url: ${author}`)
     addBlog()
   }
 
@@ -132,6 +131,7 @@ const App = () => {
 
   return (
     <div>
+    <Notification message={errorMessage} />
       {user === null ?
       loginForm() :
       <div>
