@@ -6,6 +6,7 @@ import Login from './components/Login'
 import Notification from './components/Notification'
 import loginService from './services/login'
 import CreateBlog from './components/CreateBlog'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -16,6 +17,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [newBlogVisible, setNewBlogVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -32,12 +34,7 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = () =>{
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url
-    }
+  const addBlog = (newBlog) =>{
     blogService
     .createBlog(newBlog)
     .then(retornedBlog=>{
@@ -107,21 +104,16 @@ const App = () => {
         password={password} />
   )
 
-  const blogList = () => (
-    <>
-        <h2>Create New</h2>
-        <CreateBlog handleSubmit={handleSubmit}
+  const newBlog = () => (
+   <Togglable buttonLabel="new note">
+      <CreateBlog handleSubmit={handleSubmit}
         handleTitleChange={handleTitleChange}
         handleAuthorChange={handleAuthorChange}
         handleUrlChange={handleUrlChange}
         title={title}
         author={author}
         url={url} />
-        <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-      </>
+  </Togglable>
   )
 
   const logOut = () => {
@@ -136,7 +128,11 @@ const App = () => {
       loginForm() :
       <div>
       <p>{user.name} logged-in <button onClick = {logOut} >log-out</button> </p>
-      {blogList()}
+      {newBlog()}
+      <h2>blogs</h2>
+      {blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} />
+      )}
       </div>
     }
     </div>
