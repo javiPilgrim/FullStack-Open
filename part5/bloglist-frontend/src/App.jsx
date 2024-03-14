@@ -1,5 +1,5 @@
 import './index.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Login from './components/Login'
@@ -14,10 +14,8 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-  const [newBlogVisible, setNewBlogVisible] = useState(false)
+  const createBlogRef = useRef()
+  
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -35,6 +33,7 @@ const App = () => {
   }, [])
 
   const addBlog = (newBlog) =>{
+    createBlogRef.current.toggleVisibility()
     blogService
     .createBlog(newBlog)
     .then(retornedBlog=>{
@@ -43,16 +42,9 @@ const App = () => {
       setTimeout(() => {
             setErrorMessage(null)
           }, 5000)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
     })
   }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    addBlog()
-  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -93,7 +85,7 @@ const App = () => {
   )
 
   const newBlog = () => (
-   <Togglable buttonLabel="new blog">
+   <Togglable buttonLabel="new blog" ref={createBlogRef}>
       <CreateBlog createNewBlog = {addBlog} />
   </Togglable>
   )
