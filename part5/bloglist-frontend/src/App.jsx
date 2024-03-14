@@ -84,18 +84,6 @@ const App = () => {
     setPassword(event.target.value);
   };
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
-
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value);
-  };
-
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value);
-  };
-
   const loginForm = () => (
     <Login handleSubmit={handleLogin}
         handleNameChange={handleNameChange}
@@ -105,14 +93,8 @@ const App = () => {
   )
 
   const newBlog = () => (
-   <Togglable buttonLabel="new note">
-      <CreateBlog handleSubmit={handleSubmit}
-        handleTitleChange={handleTitleChange}
-        handleAuthorChange={handleAuthorChange}
-        handleUrlChange={handleUrlChange}
-        title={title}
-        author={author}
-        url={url} />
+   <Togglable buttonLabel="new blog">
+      <CreateBlog createNewBlog = {addBlog} />
   </Togglable>
   )
 
