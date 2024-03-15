@@ -17,6 +17,8 @@ const App = () => {
   const createBlogRef = useRef()
   
 
+  
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -97,18 +99,23 @@ const App = () => {
 
   return (
     <div>
-    <Notification message={errorMessage} />
-      {user === null ?
-      loginForm() :
-      <div>
-      <p>{user.name} logged-in <button onClick = {logOut} >log-out</button> </p>
-      {newBlog()}
-      <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      <Notification message={errorMessage} />
+      {user === null ? (
+        loginForm()
+      ) : (
+        <div>
+          <p>
+            {user.name} logged-in <button onClick={logOut}>log-out</button>
+          </p>
+          {newBlog()}
+          <h2>blogs</h2>
+          {blogs.map((blog) => (
+            <div key={blog.id}>
+              <Blog blog={blog} />
+            </div>
+          ))}
+        </div>
       )}
-      </div>
-    }
     </div>
   )
 }
