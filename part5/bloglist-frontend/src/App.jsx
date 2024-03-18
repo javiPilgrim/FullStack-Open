@@ -16,7 +16,10 @@ const App = () => {
   const [user, setUser] = useState(null)
   const createBlogRef = useRef()
   
-
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+  const [like, setLike] = useState(0)
   
 
   useEffect(() => {
@@ -34,17 +37,41 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = (newBlog) =>{
+  const addBlog = (newBlog) => {
     createBlogRef.current.toggleVisibility()
     blogService
     .createBlog(newBlog)
-    .then(retornedBlog=>{
+    .then(retornedBlog => {
       setBlogs(blogs.concat(retornedBlog));
       setErrorMessage(`INFO: ${newBlog.title} has been added to the list`)
       setTimeout(() => {
             setErrorMessage(null)
           }, 5000)
     })
+  }
+
+  const addLike = async (id) => {
+    createBlogRef.current.toggleVisibility()
+    const result = await blogService.getById(id)
+    console.log(result)
+    const newObject = {
+      title: result.title,
+      author: result.author,
+      url: result.url,
+      likes: result.likes + 1,
+      user: user.id
+     }
+     console.log('El blog actualizado es: ', newObject)
+
+    
+    const returnedBlog = await blogService
+    .newLike(id, newObject)
+
+      setErrorMessage(`INFO: ${newObject.title} has a new like`)
+      setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+    
   }
 
 
@@ -97,6 +124,7 @@ const App = () => {
     window.location.reload()
   }
 
+
   return (
     <div>
       <Notification message={errorMessage} />
@@ -111,7 +139,7 @@ const App = () => {
           <h2>blogs</h2>
           {blogs.map((blog) => (
             <div key={blog.id}>
-              <Blog blog={blog} />
+              <Blog blog={blog} addLike={() => addLike(blog.id)}/>
             </div>
           ))}
         </div>

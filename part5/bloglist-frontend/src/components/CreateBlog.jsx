@@ -18,6 +18,7 @@ const CreateBlog = ({ createNewBlog }) => {
     setAuthor('')
     setTitle('')
     setUrl('')
+    window.location.reload();
   }
   
   return(
@@ -31,7 +32,6 @@ const CreateBlog = ({ createNewBlog }) => {
             <input
             type="text"
             value={title}
-            name="title"
             onChange={event => setTitle(event.target.value)}
           />
         </div>
@@ -40,7 +40,6 @@ const CreateBlog = ({ createNewBlog }) => {
             <input
             type="text"
             value={author}
-            name="author"
             onChange={event => setAuthor(event.target.value)}
           />
         </div>
@@ -49,7 +48,6 @@ const CreateBlog = ({ createNewBlog }) => {
             <input
             type="text"
             value={url}
-            name="url"
             onChange={event => setUrl(event.target.value)}
           />
         </div>
