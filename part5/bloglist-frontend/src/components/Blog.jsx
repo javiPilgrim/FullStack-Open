@@ -1,6 +1,7 @@
-import { useState } from "react";
+import React, { useState, useEffect } from 'react'
 
-const Blog = ({ blog, addLike }) => {
+function Blog({ blog, addLike, delBlog, user }) {
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -8,41 +9,48 @@ const Blog = ({ blog, addLike }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  const [showLikes, setShowLikes] = useState(false);
-  return (
-  <div style={blogStyle}>
-    Blog: {blog.title} /  Author: {blog.author}
-    <button onClick={() => setShowLikes(!showLikes)}>
-        {showLikes ? "Ocultar" : "Mostrar"}
-      </button>
-      {showLikes && (
-        <div>
-          url: {blog.url} <br/>
-          Likes: {blog.likes} <button onClick={addLike}>Like</button> <br/>
-          user: {blog.user.name}
-        </div>
-      )}
-  </div>  
-  )
-  }
-/*
-  const newLike = ({ newLike }) => {
-    const [newBlog, setNewBlog] = useState('')
-    const [title, setTitle] = useState('')
-    const [author, setAuthor] = useState('')
-    const [url, setUrl] = useState('')
-    const [like, setLike] = useState('')
-  
-    const addBLike = (event) =>{
-      event.preventDefault()
-      createNewLike({
-        title: title,
-        author: author,
-        url: url
-      })
-      window.location.reload()
-    }
-}
-*/
 
-export default Blog
+  const deleteButton = {
+    color: "white",
+    backgroundColor: "red"
+  }
+
+    const [showItems, setShowItems] = useState(false);
+    const [showLikes, setShowLikes] = useState(blog.likes);
+
+  
+    const handleAddLike = async () => {
+      await addLike(blog.id);
+      setShowLikes(showLikes + 1);
+      window.location.reload()
+    };
+
+    const handleDeleteBlog = async () => {
+      await delBlog(blog.id);
+      setShowLikes(showLikes)
+    };
+  
+    return (
+      <div style={blogStyle}>
+        Blog: {blog.title} / Author: {blog.author}
+        <button onClick={() => setShowItems(!showItems)}>
+          {showItems ? 'Ocultar' : 'Mostrar'}
+        </button>
+        {showItems && (
+          <div>
+            url: {blog.url} <br />
+            Likes: {showLikes} <button onClick={handleAddLike}>Like</button> <br />
+            user: {blog.user.name}
+            {blog.user.name === user.name &&(
+              <div>
+            <br/>
+            <button style={deleteButton} onClick = {handleDeleteBlog} >Delete</button>
+            </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+  
+  export default Blog;

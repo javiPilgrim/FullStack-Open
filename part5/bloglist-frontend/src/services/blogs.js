@@ -17,6 +17,14 @@ const getById = (id) => {
   return request.then((response) => response.data)
 };
 
+const delById = (id) => {
+  const config = {
+    headers: { Authorization: token },
+  }
+  const request = axios.delete(`${baseUrl}/${id}`,config)
+  return request.then((response => response.data))
+}
+
 
 
 const createBlog = async newObject => {
@@ -32,11 +40,9 @@ const createBlog = async newObject => {
       headers: { Authorization: token },
     }
       const response = await axios.put(`${baseUrl}/${id}`, newObject, config)
-      console.log('url: ', `${baseUrl}/${id}`)
-      console.log(newObject)
       return response.data
     }
 
 
 
-export default { getAll, createBlog, setToken, newLike, getById }
+export default { getAll, createBlog, setToken, newLike, getById, delById }

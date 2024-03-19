@@ -10,6 +10,14 @@ blogRouter.get('/', async(request, response) => {
   .find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
+
+blogRouter.get('/:id', async(request, response) => {
+  const blogId = request.params.id;
+  const blogs = await Blog
+  .findById(blogId).populate('user', { username: 1, name: 1 })
+  response.json(blogs)
+})
+
   
 blogRouter.post('/', middleware.userExtractor, async(request, response) => {
   const user = request.user 
@@ -48,11 +56,11 @@ blogRouter.post('/', middleware.userExtractor, async(request, response) => {
   })
 
   blogRouter.put('/:id', async(request, response) => {
-    const { title, author, url, likes } = request.body
+    const { title, author, url, likes, user } = request.body
 
     const updatedBlog = await Blog.findByIdAndUpdate(
         request.params.id, 
-        { title, author, url, likes },
+        { title, author, url, likes, user },
         { new: true, runValidators: true, context: 'query' }
     ) 
         response.json(updatedBlog).status(201)

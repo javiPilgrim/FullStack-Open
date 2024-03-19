@@ -15,11 +15,7 @@ const App = () => {
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
   const createBlogRef = useRef()
-  
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-  const [like, setLike] = useState(0)
+
   
 
   useEffect(() => {
@@ -50,10 +46,21 @@ const App = () => {
     })
   }
 
+  const delBlog = async(blog) => {
+    const confirmed = window.confirm(`Do you really want to remove ${blog.title}?`);
+    if (confirmed) {
+    await blogService
+    .delById(blog.id)
+    window.location.reload()
+    setErrorMessage(`INFO: ${blog.title} has been deleted`)
+      setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+  }
+}
+
   const addLike = async (id) => {
-    createBlogRef.current.toggleVisibility()
     const result = await blogService.getById(id)
-    console.log(result)
     const newObject = {
       title: result.title,
       author: result.author,
@@ -61,23 +68,16 @@ const App = () => {
       likes: result.likes + 1,
       user: user.id
      }
-     console.log('El blog actualizado es: ', newObject)
-
-    
     const returnedBlog = await blogService
     .newLike(id, newObject)
-
       setErrorMessage(`INFO: ${newObject.title} has a new like`)
       setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
-    
   }
-
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
     try {
       const user = await loginService.login({
         username, password,
@@ -87,8 +87,6 @@ const App = () => {
       ) 
       setUser(user)
       blogService.setToken(user.token)
-      setUsername('')
-      setPassword('')
     } catch (exception) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
@@ -137,11 +135,18 @@ const App = () => {
           </p>
           {newBlog()}
           <h2>blogs</h2>
-          {blogs.map((blog) => (
+          <ol>
+          {blogs.sort((a, b) => b.likes - a.likes)
+          .map((blog) => (
             <div key={blog.id}>
-              <Blog blog={blog} addLike={() => addLike(blog.id)}/>
+              <li><Blog 
+              blog={blog} 
+              addLike={() => addLike(blog.id)} 
+              delBlog={()=>delBlog(blog)}
+              user ={user}/></li>
             </div>
           ))}
+          </ol>
         </div>
       )}
     </div>
