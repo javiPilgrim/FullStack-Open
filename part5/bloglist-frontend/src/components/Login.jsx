@@ -1,31 +1,36 @@
-const Login = ({ handleSubmit, username, handleNameChange, password, handlePasswordChange }) => (
+const Login = ({
+  handleSubmit,
+  username,
+  handleNameChange,
+  password,
+  handlePasswordChange,
+}) => (
+  <div>
     <div>
+      <h2>Please, Login...</h2>
+    </div>
+    <form onSubmit={handleSubmit}>
       <div>
-        <h2>Please, Login...</h2>
+        username:
+        <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={handleNameChange}
+        />
       </div>
-            <form onSubmit={handleSubmit}>
-        <div>
-          username: 
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={handleNameChange}
-          />
-        </div>
-        <div>
-          password: 
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={handlePasswordChange}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-    </div>  
-  )
+      <div>
+        password:
+        <input
+          type="password"
+          value={password}
+          name="Password"
+          onChange={handlePasswordChange}
+        />
+      </div>
+      <button type="submit">login</button>
+    </form>
+  </div>
+);
 
-  
-  export default Login
+export default Login;

@@ -1,24 +1,26 @@
-const newLike = ({ newLike }) => {
-    const [newBlog, setNewBlog] = useState('')
-    const [title, setTitle] = useState('')
-    const [author, setAuthor] = useState('')
-    const [url, setUrl] = useState('')
-    const [like, setLike] = useState('')
-  
-    const addBLike = (event) =>{
-      event.preventDefault()
-      createNewLike({
-        title: title,
-        author: author,
-        url: url
+import { useState } from "react";
 
-      })
-      setNewBlog('')
-      setAuthor('')
-      setTitle('')
-      setUrl('')
-      window.location.reload()
-    }
-}
-  
-    export default newLike
+const useNewLike = ({ newLike }) => {
+  const [newBlog, setNewBlog] = useState("");
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+
+  const addLike = (event) => {
+    event.preventDefault();
+    console.log(newLike, newBlog);
+    createNewLike({
+      title: title,
+      author: author,
+      url: url,
+    });
+    setNewBlog("");
+    setAuthor("");
+    setTitle("");
+    setUrl("");
+    window.location.reload();
+  };
+  console.log(addLike);
+};
+
+export default useNewLike;
