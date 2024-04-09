@@ -28,13 +28,15 @@ function Blog({ blog, addLike, delBlog, user }) {
   };
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blogComponent">
+      <div className="blogBasicInfo">
       Blog: {blog.title} / Author: {blog.author}
+      </div>
       <button onClick={() => setShowItems(!showItems)}>
         {showItems ? "Ocultar" : "Mostrar"}
       </button>
       {showItems && (
-        <div>
+        <div className="blogDetailedInfo">
           url: {blog.url} <br />
           Likes: {showLikes} <button onClick={handleAddLike}>Like</button>{" "}
           <br />
