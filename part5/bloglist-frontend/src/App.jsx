@@ -152,6 +152,7 @@ const App = () => {
           </ol>
         </div>
       )}
+      <h6>Javi Macias Proyect</h6>
     </div>
   );
 };
