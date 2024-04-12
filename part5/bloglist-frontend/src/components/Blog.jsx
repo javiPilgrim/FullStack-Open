@@ -32,19 +32,19 @@ function Blog({ blog, addLike, delBlog, user }) {
       <div className="blogBasicInfo">
       Blog: {blog.title} / Author: {blog.author}
       </div>
-      <button onClick={() => setShowItems(!showItems)}>
+      <button id='mostrar' onClick={() => setShowItems(!showItems)}>
         {showItems ? "Ocultar" : "Mostrar"}
       </button>
       {showItems && (
         <div className="blogDetailedInfo">
           url: {blog.url} <br />
-          Likes: {showLikes} <button onClick={handleAddLike}>Like</button>{" "}
+          Likes: {showLikes} <button id='likeButton' onClick={handleAddLike}>Like</button>{" "}
           <br />
           user: {blog.user.name}
           {blog.user.name === user.name && (
             <div>
               <br />
-              <button style={deleteButton} onClick={handleDeleteBlog}>
+              <button id='deleteButton' style={deleteButton} onClick={handleDeleteBlog}>
                 Delete
               </button>
             </div>
