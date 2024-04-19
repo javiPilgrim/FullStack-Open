@@ -25,7 +25,8 @@ const initialState = anecdotesAtStart.map(asObject);
 const anecdoteReducer = (state = initialState, action) => {
   console.log("state now: ", state);
   console.log("action", action);
-  if (action.type === "VOTE") {
+  switch(action.type){
+  case "VOTE" : {
     const id = action.payload.id;
     const anecdoteToChange = state.find((n) => n.id === id);
     const changedAnecdote = {
@@ -34,9 +35,13 @@ const anecdoteReducer = (state = initialState, action) => {
     }
     return state.map((anecdote) =>
       anecdote.id !== id ? anecdote : changedAnecdote
-    )
+    );
   }
-  return state
+  case 'NEW_ANECDOTE':
+    return state.concat(action.payload)
+  default:
+    return state;
+  }
 };
 
 export default anecdoteReducer;
