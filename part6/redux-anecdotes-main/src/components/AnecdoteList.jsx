@@ -11,6 +11,7 @@ const AnecdoteList = () => {
   
 
   const vote = (id) => {
+    console.log('la id es: ', id)
     dispatch(addVote(id));
   };
 
