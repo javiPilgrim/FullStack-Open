@@ -1,5 +1,5 @@
 
-  import { createSlice, current } from "@reduxjs/toolkit";
+  import { createSlice } from "@reduxjs/toolkit";
   
   const anecdotesAtStart = [
     "If it hurts, do it more often",
@@ -27,10 +27,7 @@
     initialState,
     reducers: {
       addVote: (state, action) => {
-        state.map(n => console.log(typeof(n.id)))
-        console.log('el payload es: ' ,action.payload)
         const anecdoteToChange = state.find((n) => n.id === action.payload);
-        console.log('la anecdota es: ', current(anecdoteToChange))
         if (anecdoteToChange) {
           anecdoteToChange.votes += 1;
         }
