@@ -11,12 +11,21 @@ const notificationSlice = createSlice({
       console.log('El payload es: ',action.payload)
       return action.payload;
     },
-    clearNotification: (state, action) => {
+    clearNotification: () => {
       return ""
     }
   }
 });
 
 export const { showNotification, clearNotification } = notificationSlice.actions;
+
+export const setNotification = (message, time) => {
+  return dispatch => {
+    dispatch(showNotification(message));
+    setTimeout(() => {
+      dispatch(clearNotification());
+    }, time * 1000);
+  }
+}
 
 export default notificationSlice.reducer;

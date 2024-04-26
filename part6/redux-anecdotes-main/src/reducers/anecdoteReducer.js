@@ -43,8 +43,5 @@
       dispatch(addVote(updatedAnecdote))
     }
   }
-
-
-
   
   export default anecdoteSlice.reducer;

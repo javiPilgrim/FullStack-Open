@@ -2,8 +2,8 @@
   "anecdotes": [
     {
       "content": "If it hurts, do it more often",
-      "id": "47145",
-      "votes": 0
+      "votes": 2,
+      "id": "47145"
     },
     {
       "content": "Adding manpower to a late software project makes it later!",
@@ -31,14 +31,14 @@
       "votes": 0
     },
     {
+      "id": "d458",
       "content": "Programming with Redux is not easy",
-      "votes": 1,
-      "id": "a904"
+      "votes": 0
     },
     {
-      "id": "e040",
-      "content": "un perro",
-      "votes": 0
+      "content": "la vida es sueño",
+      "votes": 3,
+      "id": "3e3f"
     }
   ]
 }
