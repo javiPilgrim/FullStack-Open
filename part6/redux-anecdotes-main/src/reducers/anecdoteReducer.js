@@ -26,12 +26,19 @@
     },
   });
   
-  export const { addVote, createAnecdote, appendAnecdote, setAnecdotes } = anecdoteSlice.actions;
+  export const { addVote, appendAnecdote, setAnecdotes } = anecdoteSlice.actions;
 
   export const initializeAnecdotes = () =>{
     return async dispatch => {
       const anecdotes = await anecdoteService.getAll()
       dispatch(setAnecdotes(anecdotes))
+    }
+  }
+
+  export const createAnecdote = (content, votes) => {
+    return async dispatch => {
+      const newAnecdote = await anecdoteService.createNew(content, votes)
+      dispatch(appendAnecdote(newAnecdote))
     }
   }
   
