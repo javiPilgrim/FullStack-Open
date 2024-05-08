@@ -14,6 +14,8 @@ const counterReducer = (state, action) => {
         return state = `Anecdote: "${action.content}" added`
     case "NEWVOTE":
         return state = `Anecdote: "${action.content}" voted`
+    case "ERROR":
+        return state = action.message
     case "CLEAR":
         return state = ""
     default:
@@ -32,6 +34,12 @@ const App = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
     },
+    onError: (error) => {
+      counterDispatch({ type: "ERROR", message: "too short anecdote. Must have lengh 5 or more, try again" });
+      setTimeout(() => {
+        counterDispatch({ type: "CLEAR" })
+      }, 5000)
+    }
    })
 
 
