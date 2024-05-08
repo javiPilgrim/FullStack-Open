@@ -4,18 +4,17 @@ import { setNotification } from "../reducers/notificationReducer";
 
 const AnecdoteList = () => {
   const dispatch = useDispatch();
-  const anecdotes = useSelector(state => {
-    return state.filter  !== 'ALL'
-      ? state.anecdotes.filter(anecdote => anecdote.content.includes(state.filter))
-      : state.anecdotes
-  })
-  
+  const anecdotes = useSelector((state) => {
+    return state.filter !== "ALL"
+      ? state.anecdotes.filter((anecdote) =>
+          anecdote.content.includes(state.filter)
+        )
+      : state.anecdotes;
+  });
 
   const vote = (id, content) => {
     dispatch(newVote(id));
-    dispatch(setNotification(`You voted ${content}`, 5))
-    
-
+    dispatch(setNotification(`You voted ${content}`, 5));
   };
 
   return [...anecdotes]
@@ -25,7 +24,9 @@ const AnecdoteList = () => {
         <div>{anecdote.content}</div>
         <div>
           has {anecdote.votes}
-          <button onClick={() => vote(anecdote.id, anecdote.content)}>vote</button>
+          <button onClick={() => vote(anecdote.id, anecdote.content)}>
+            vote
+          </button>
         </div>
       </div>
     ));
