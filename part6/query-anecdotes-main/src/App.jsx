@@ -1,11 +1,29 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getAnecdotes, updateAnecdote } from './requests'
+import { useReducer } from 'react'
+import { AnecdoteContext } from './anecdoteContext'
 
 
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
+
+const counterReducer = (state, action) => {
+  switch (action.type) {
+    case "NEWANECDOTE":
+        return state = `Anecdote: "${action.content}" added`
+    case "NEWVOTE":
+        return state = `Anecdote: "${action.content}" voted`
+    case "CLEAR":
+        return state = ""
+    default:
+        return state
+  }
+}
+
 const App = () => {
+
+  const [counter, counterDispatch] = useReducer(counterReducer, "")
 
   const queryClient = useQueryClient()
 
@@ -42,16 +60,22 @@ const App = () => {
 const handleVote = (anecdote) => {
   const updatedAnecdote = { ...anecdote, votes: anecdote.votes + 1 };
   newAnecdoteMutation.mutate( updatedAnecdote );
+  counterDispatch({ type: "NEWVOTE", content: anecdote.content});
+    setTimeout(() => {
+      counterDispatch({ type: "CLEAR" })
+    }, 5000)
 }
 
 
-  return (
+return (
+  <AnecdoteContext.Provider value={{ counter, counterDispatch, handleVote }}>
     <div>
       <h3>Anecdote app</h3>
-    
+
       <Notification />
       <AnecdoteForm />
-    
+
+      <div>
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
@@ -64,7 +88,9 @@ const handleVote = (anecdote) => {
         </div>
       )}
     </div>
-  )
+    </div>
+  </AnecdoteContext.Provider>
+)
 }
 
 export default App

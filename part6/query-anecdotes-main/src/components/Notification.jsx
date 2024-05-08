@@ -1,4 +1,8 @@
+import React, { useContext } from 'react';
+import { AnecdoteContext } from '../anecdoteContext';
+
 const Notification = () => {
+  const { counter } = useContext(AnecdoteContext);
   const style = {
     border: 'solid',
     padding: 10,
@@ -6,11 +10,10 @@ const Notification = () => {
     marginBottom: 5
   }
   
-  if (true) return null
 
   return (
     <div style={style}>
-      
+      {counter}
     </div>
   )
 }
