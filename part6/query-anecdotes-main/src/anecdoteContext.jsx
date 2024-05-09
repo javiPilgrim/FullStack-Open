@@ -1,3 +1,3 @@
-import React from "react";
+import React from "react"
 
-export const AnecdoteContext = React.createContext();
+export const AnecdoteContext = React.createContext()
