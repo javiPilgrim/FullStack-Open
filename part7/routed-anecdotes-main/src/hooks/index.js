@@ -1,21 +1,22 @@
-import { useState } from "react"
+import { useState } from "react";
 
 export const useField = (name) => {
-    const [value, setValue] = useState('')
-  
-    const onChange = (event) => {
-      setValue(event.target.value)
-    }
+  const [value, setValue] = useState("");
 
-    const reset = () => {
-        setValue('')
-    }
-  
-    return {
+  const onChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  const reset = () => {
+    setValue("");
+  };
+
+  return {
+    field: {
       name,
       value,
       onChange,
-      reset
-    }
-  }
-
+    },
+    reset,
+  };
+};
