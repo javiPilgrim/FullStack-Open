@@ -1,5 +1,6 @@
 import "./index.css";
 import { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import Login from "./components/Login";
@@ -7,6 +8,9 @@ import Notification from "./components/Notification";
 import loginService from "./services/login";
 import CreateBlog from "./components/CreateBlog";
 import Togglable from "./components/Togglable";
+import { createStore } from 'redux'
+import { newBlogNotification } from "./components/notificationReducer";
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,6 +19,8 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const createBlogRef = useRef();
+  const dispatch = useDispatch();
+ 
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -33,9 +39,10 @@ const App = () => {
     createBlogRef.current.toggleVisibility();
     blogService.createBlog(newBlog).then((retornedBlog) => {
       setBlogs(blogs.concat(retornedBlog));
-      setErrorMessage(`INFO: ${newBlog.title} has been added to the list`);
+    const content = `INFO: ${newBlog.title} has been added to the list`
+      dispatch(newBlogNotification(content));
       setTimeout(() => {
-        setErrorMessage(null);
+        dispatch(newBlogNotification(""));
       }, 5000);
       blogService.getAll().then((blogs) => setBlogs(blogs));
     });
@@ -47,9 +54,10 @@ const App = () => {
     );
     if (confirmed) {
       await blogService.delById(blog.id);
-      setErrorMessage(`INFO: ${blog.title} has been deleted`);
+     const content = `INFO: ${blog.title} has been deleted`
+     dispatch(newBlogNotification(content))
       setTimeout(() => {
-        setErrorMessage(null);
+        dispatch({ type: "CLEAR" });
       }, 5000);
       blogService.getAll().then((blogs) => setBlogs(blogs));
     }
@@ -65,9 +73,9 @@ const App = () => {
       user: user.id,
     };
     await blogService.newLike(id, newObject);
-    setErrorMessage(`INFO: ${newObject.title} has a new like`);
+    dispatch(newBlogNotification(`INFO: ${newObject.title} has a new like`))
     setTimeout(() => {
-      setErrorMessage(null);
+      dispatch({ type: "CLEAR" });
     }, 5000);
     const updatedBlogs = blogs.map((b) =>
       b.id === id ? { ...b, likes: b.likes + 1 } : b,
@@ -86,9 +94,9 @@ const App = () => {
       setUser(user);
       blogService.setToken(user.token);
     } catch (exception) {
-      setErrorMessage("Wrong credentials");
+      dispatch(newBlogNotification("Wrong credentials"));
       setTimeout(() => {
-        setErrorMessage(null);
+        dispatch({ type: "CLEAR" });
       }, 5000);
     }
   };
@@ -124,7 +132,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={errorMessage} />
+      <Notification />
       {user === null ? (
         loginForm()
       ) : (

@@ -8,7 +8,6 @@ const CreateBlog = ({ createNewBlog }) => {
 
   const addBlog = (event) => {
     event.preventDefault();
-    console.log(newBlog);
     createNewBlog({
       title: title,
       author: author,
