@@ -1,16 +1,15 @@
-
-import { useSelector } from "react-redux"
+import { useSelector } from "react-redux";
 
 const Notification = () => {
-  const notificationMessage = useSelector((state) => state.message)
-  const className = notificationMessage 
-    ? notificationMessage.includes("INFO") 
-      ? "confirmation" 
-      : "error" 
-    : "";
+  const notificationMessage = useSelector((state) => state.message.message);
+  let className = "";
+
+  if (notificationMessage) {
+    className = notificationMessage.includes("INFO") ? "confirmation" : "error";
+  }
 
   return (
-    <div className={`${className}`}>
+    <div className={className}>
       {notificationMessage && <p>{notificationMessage}</p>}
     </div>
   );

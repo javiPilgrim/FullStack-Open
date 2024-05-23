@@ -1,6 +1,6 @@
 import "./index.css";
-import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import Login from "./components/Login";
@@ -8,23 +8,24 @@ import Notification from "./components/Notification";
 import loginService from "./services/login";
 import CreateBlog from "./components/CreateBlog";
 import Togglable from "./components/Togglable";
-import { createStore } from 'redux'
-import { newBlogNotification } from "./components/notificationReducer";
-
+import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import { newBlogNotification } from "./reducers/notificationReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const createBlogRef = useRef();
   const dispatch = useDispatch();
- 
+  const blogs = useSelector((state) => state.blogs);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    const fetchBlogs = async () => {
+      const blogs = await blogService.getAll();
+      dispatch(initializeBlogs(blogs));
+    };
+    fetchBlogs();
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -35,69 +36,33 @@ const App = () => {
     }
   }, []);
 
-  const addBlog = (newBlog) => {
-    createBlogRef.current.toggleVisibility();
-    blogService.createBlog(newBlog).then((retornedBlog) => {
-      setBlogs(blogs.concat(retornedBlog));
-    const content = `INFO: ${newBlog.title} has been added to the list`
-      dispatch(newBlogNotification(content));
-      setTimeout(() => {
-        dispatch(newBlogNotification(""));
-      }, 5000);
-      blogService.getAll().then((blogs) => setBlogs(blogs));
-    });
-  };
-
-  const delBlog = async (blog) => {
-    const confirmed = window.confirm(
-      `Do you really want to remove ${blog.title}?`,
-    );
-    if (confirmed) {
-      await blogService.delById(blog.id);
-     const content = `INFO: ${blog.title} has been deleted`
-     dispatch(newBlogNotification(content))
-      setTimeout(() => {
-        dispatch({ type: "CLEAR" });
-      }, 5000);
-      blogService.getAll().then((blogs) => setBlogs(blogs));
-    }
-  };
-
-  const addLike = async (id) => {
-    const result = await blogService.getById(id);
-    const newObject = {
-      title: result.title,
-      author: result.author,
-      url: result.url,
-      likes: result.likes + 1,
-      user: user.id,
-    };
-    await blogService.newLike(id, newObject);
-    dispatch(newBlogNotification(`INFO: ${newObject.title} has a new like`))
+  const notify = (message, type = "INFO") => {
+    dispatch(newBlogNotification(`${type}: ${message}`));
     setTimeout(() => {
       dispatch({ type: "CLEAR" });
     }, 5000);
-    const updatedBlogs = blogs.map((b) =>
-      b.id === id ? { ...b, likes: b.likes + 1 } : b,
-    );
-    setBlogs(updatedBlogs);
+  };
+
+  const addBlog = async (newBlog) => {
+    createBlogRef.current.toggleVisibility();
+    try {
+      const returnedBlog = await blogService.createBlog(newBlog);
+      dispatch(createBlog(returnedBlog));
+      notify(`${newBlog.title} has been added to the list`);
+    } catch (error) {
+      notify("Failed to add blog", "ERROR");
+    }
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
+      const user = await loginService.login({ username, password });
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
       setUser(user);
       blogService.setToken(user.token);
     } catch (exception) {
-      dispatch(newBlogNotification("Wrong credentials"));
-      setTimeout(() => {
-        dispatch({ type: "CLEAR" });
-      }, 5000);
+      notify("Wrong credentials", "ERROR");
     }
   };
 
@@ -127,7 +92,7 @@ const App = () => {
 
   const logOut = () => {
     window.localStorage.removeItem("loggedBlogAppUser");
-    window.location.reload();
+    setUser(null);
   };
 
   return (

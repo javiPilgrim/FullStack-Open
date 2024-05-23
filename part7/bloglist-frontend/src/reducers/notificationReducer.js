@@ -1,5 +1,6 @@
+
 const initialState = {
-  message: null,
+  message: "",
 };
 
 const notificationReducer = (state = initialState, action) => {
@@ -7,7 +8,7 @@ const notificationReducer = (state = initialState, action) => {
     case "NEWBLOG":
       return { ...state, message: action.payload };
     case "CLEAR":
-      return { ...state, message: null };
+      return { ...state, message: "" };
     default:
       return state;
   }
@@ -16,7 +17,7 @@ const notificationReducer = (state = initialState, action) => {
 export const newBlogNotification = (content) => {
   return {
     type: "NEWBLOG",
-    payload: content
+    payload: content,
   };
 };
 
