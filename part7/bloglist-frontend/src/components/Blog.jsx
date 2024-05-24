@@ -1,6 +1,10 @@
-import { useState } from "react";
 
-function Blog({ blog, addLike, delBlog, user }) {
+import { useState } from "react";
+import { useSelector } from "react-redux";
+
+function Blog({ blog, addLike, delBlog }) {
+  const user = useSelector((state) => state.user);
+  console.log('esto es de blog: ',user.name)
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,12 +22,12 @@ function Blog({ blog, addLike, delBlog, user }) {
   const [showLikes, setShowLikes] = useState(blog.likes);
 
   const handleAddLike = async () => {
-    await addLike(blog.id);
+    await addLike();
     setShowLikes(showLikes + 1);
   };
 
   const handleDeleteBlog = async () => {
-    await delBlog(blog.id);
+    await delBlog();
     setShowLikes(showLikes);
   };
 
@@ -44,6 +48,7 @@ function Blog({ blog, addLike, delBlog, user }) {
           </button>{" "}
           <br />
           user: {blog.user.name}
+          Blog: {user.id}  user: {user.name}
           {blog.user.name === user.name && (
             <div>
               <br />

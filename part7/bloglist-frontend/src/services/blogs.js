@@ -33,12 +33,13 @@ const createBlog = async (newObject) => {
   return response.data;
 };
 
-const newLike = async (id, newObject) => {
+const update = async (id, newObject) => {
   const config = {
     headers: { Authorization: token },
   };
+  console.log(`Se manda id: ${id} y newObject: ${newObject}`)
   const response = await axios.put(`${baseUrl}/${id}`, newObject, config);
   return response.data;
 };
 
-export default { getAll, createBlog, setToken, newLike, getById, delById };
+export default { getAll, createBlog, setToken, update, getById, delById };

@@ -1,3 +1,4 @@
+
 import "./index.css";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,16 +9,17 @@ import Notification from "./components/Notification";
 import loginService from "./services/login";
 import CreateBlog from "./components/CreateBlog";
 import Togglable from "./components/Togglable";
-import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import { initializeBlogs, createBlog, updateBlog, deleteBlog } from "./reducers/blogReducer";
 import { newBlogNotification } from "./reducers/notificationReducer";
+import { setUser, clearUser } from "./reducers/userReducer";
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const createBlogRef = useRef();
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -31,10 +33,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      dispatch(setUser(user));
       blogService.setToken(user.token);
     }
-  }, []);
+  }, [dispatch]);
 
   const notify = (message, type = "INFO") => {
     dispatch(newBlogNotification(`${type}: ${message}`));
@@ -54,12 +56,43 @@ const App = () => {
     }
   };
 
+  const addLike = async (id) => {
+    const blogToLike = blogs.find(blog => blog.id === id);
+    const updatedBlog = {
+      ...blogToLike,
+      user: user.id,
+      likes: blogToLike.likes + 1,
+    };
+    try {
+      const returnedBlog = await blogService.update(id, updatedBlog);
+      dispatch(updateBlog(returnedBlog));
+      notify(`Liked ${returnedBlog.title}`);
+    } catch (error) {
+      console.error('Failed to like blog', error); // Añade logging para depurar el error
+      notify("Failed to like blog", "ERROR");
+    }
+  };
+
+  const delBlog = async (id) => {
+    const blogToDelete = blogs.find(blog => blog.id === id);
+    const confirmed = window.confirm(`Do you really want to remove ${blogToDelete.title}?`);
+    if (confirmed) {
+      try {
+        await blogService.delById(id);
+        dispatch(deleteBlog(id));
+        notify(`${blogToDelete.title} has been deleted`);
+      } catch (error) {
+        notify("Failed to delete blog", "ERROR");
+      }
+    }
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       const user = await loginService.login({ username, password });
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
-      setUser(user);
+      dispatch(setUser(user));
       blogService.setToken(user.token);
     } catch (exception) {
       notify("Wrong credentials", "ERROR");
@@ -92,7 +125,7 @@ const App = () => {
 
   const logOut = () => {
     window.localStorage.removeItem("loggedBlogAppUser");
-    setUser(null);
+    dispatch(clearUser());
   };
 
   return (
@@ -116,7 +149,7 @@ const App = () => {
                     <Blog
                       blog={blog}
                       addLike={() => addLike(blog.id)}
-                      delBlog={() => delBlog(blog)}
+                      delBlog={() => delBlog(blog.id)}
                       user={user}
                     />
                   </li>
