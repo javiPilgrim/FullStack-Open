@@ -1,4 +1,3 @@
-
 const initialState = {
   message: "",
 };
@@ -18,6 +17,12 @@ export const newBlogNotification = (content) => {
   return {
     type: "NEWBLOG",
     payload: content,
+  };
+};
+
+export const clearNotification = () => {
+  return {
+    type: "CLEAR",
   };
 };
 
