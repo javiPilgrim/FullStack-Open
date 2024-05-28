@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 
 function Blog({ blog, addLike, delBlog }) {
   const user = useSelector((state) => state.user);
-  console.log('esto es de blog: ',user.name)
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,

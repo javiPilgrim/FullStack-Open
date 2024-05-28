@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 
 const Notification = () => {
   const notificationMessage = useSelector((state) => state.notification.message);
-  console.log('Notification Message: ', notificationMessage);
   let className = "";
 
   if (notificationMessage) {

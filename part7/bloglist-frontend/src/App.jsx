@@ -9,6 +9,10 @@ import blogService from './services/blogs'
 import { newBlogNotification, clearNotification } from "./reducers/notificationReducer";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Users from "./components/Users";
+import User from "./components/User";
+
+
+
 
 const App = () => {
   const dispatch = useDispatch();
@@ -53,6 +57,7 @@ const App = () => {
             <Routes>
               <Route path="/users" element={<Users />} />
               <Route path="/" element={<BlogList notify={notify} />} />
+              <Route path="/users/:id" element={<User />} />
             </Routes>
           </div>
         )}

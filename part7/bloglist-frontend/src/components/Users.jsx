@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { initializeUsers } from '../reducers/usersReducer';
 import userService from '../services/users'
+import { Link } from 'react-router-dom';
 
 
 const Users = () => {
@@ -39,7 +40,7 @@ const Users = () => {
         <tbody>
           {users.map(user => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td> <Link to={`/users/${user.id}`}>{user.name}</Link></td>
               <td>{user.blogs.length}</td>
             </tr>
           ))}
