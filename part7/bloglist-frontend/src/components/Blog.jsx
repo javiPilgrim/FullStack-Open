@@ -1,8 +1,9 @@
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-function Blog({ blog, addLike, delBlog }) {
+function Blog({ blog, delBlog }) {
   const user = useSelector((state) => state.user);
   const blogStyle = {
     paddingTop: 10,
@@ -20,11 +21,6 @@ function Blog({ blog, addLike, delBlog }) {
   const [showItems, setShowItems] = useState(false);
   const [showLikes, setShowLikes] = useState(blog.likes);
 
-  const handleAddLike = async () => {
-    await addLike();
-    setShowLikes(showLikes + 1);
-  };
-
   const handleDeleteBlog = async () => {
     await delBlog();
     setShowLikes(showLikes);
@@ -33,21 +29,14 @@ function Blog({ blog, addLike, delBlog }) {
   return (
     <div style={blogStyle} className="blogComponent">
       <div className="blogBasicInfo">
-        Blog: {blog.title} / Author: {blog.author}
+        Blog: <Link to={`/blogs/${blog.id}`} >{blog.title} </Link>/ Author: {blog.author}
       </div>
       <button id="mostrar" onClick={() => setShowItems(!showItems)}>
         {showItems ? "Ocultar" : "Mostrar"}
       </button>
       {showItems && (
         <div className="blogDetailedInfo">
-          url: {blog.url} <br />
-          Likes: {showLikes}{" "}
-          <button id="likeButton" onClick={handleAddLike}>
-            Like
-          </button>{" "}
-          <br />
           user: {blog.user.name}
-          Blog: {user.id}  user: {user.name}
           {blog.user.name === user.name && (
             <div>
               <br />

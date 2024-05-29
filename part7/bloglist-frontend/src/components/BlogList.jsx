@@ -4,7 +4,7 @@ import blogService from "../services/blogs";
 import Blog from "./Blog";
 import CreateBlog from "./CreateBlog";
 import Togglable from "./Togglable";
-import { initializeBlogs, createBlog, updateBlog, deleteBlog } from "../reducers/blogReducer";
+import { initializeBlogs, createBlog, deleteBlog } from "../reducers/blogReducer";
 
 const BlogList = ({ notify }) => {
   const createBlogRef = useRef();
@@ -31,21 +31,6 @@ const BlogList = ({ notify }) => {
     }
   };
 
-  const addLike = async (id) => {
-    const blogToLike = blogs.find(blog => blog.id === id);
-    const updatedBlog = {
-      ...blogToLike,
-      user: user.id,
-      likes: blogToLike.likes + 1,
-    };
-    try {
-      const returnedBlog = await blogService.update(id, updatedBlog);
-      dispatch(updateBlog(returnedBlog));
-      notify(`Liked ${returnedBlog.title}`);
-    } catch (error) {
-      notify("Failed to like blog", "ERROR");
-    }
-  };
 
   const delBlog = async (id) => {
     const blogToDelete = blogs.find(blog => blog.id === id);
@@ -75,7 +60,6 @@ const BlogList = ({ notify }) => {
               <li>
                 <Blog
                   blog={blog}
-                  addLike={() => addLike(blog.id)}
                   delBlog={() => delBlog(blog.id)}
                   user={user}
                 />

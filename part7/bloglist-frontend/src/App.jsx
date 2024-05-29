@@ -10,6 +10,7 @@ import { newBlogNotification, clearNotification } from "./reducers/notificationR
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Users from "./components/Users";
 import User from "./components/User";
+import BlogView from "./components/BlogView";
 
 
 
@@ -58,6 +59,7 @@ const App = () => {
               <Route path="/users" element={<Users />} />
               <Route path="/" element={<BlogList notify={notify} />} />
               <Route path="/users/:id" element={<User />} />
+              <Route path="/blogs/:id" element={<BlogView />} />
             </Routes>
           </div>
         )}

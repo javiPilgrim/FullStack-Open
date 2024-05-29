@@ -15,6 +15,7 @@ usersRouter.get("/", async (request, response) => {
 usersRouter.get("/:id", async (request, response) => {
   const userId = request.params.id;
   const users = await User.findById(userId).populate("blogs", {
+    title: 1,
     author: 1,
     url: 1,
     likes: 1
