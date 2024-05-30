@@ -44,6 +44,7 @@ const BlogView = () => {
   if (!blog) {
     return <div>Loading...</div>;
   }
+  
   return (
     <div>
       <h2>{blog.title} by {blog.author}</h2>
@@ -52,6 +53,16 @@ const BlogView = () => {
       </a>
       <p>{showLikes} Likes <button onClick={handleAddLike}>Like</button></p>
       <p>Added by {blog.user.name}</p>
+      <p>Comments:</p>
+      <ul>
+      {blog.comments && blog.comments.length > 0 ? (
+          blog.comments.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))
+        ) : (
+          <li>No comments yet</li>
+        )}
+      </ul>
       
     </div>
   );
