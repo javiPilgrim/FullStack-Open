@@ -26,10 +26,11 @@ const BlogView = () => {
   }, [id]);
 
   const handleAddLike = async () => {
+    const fullUser = blog.user;
     try {
       const updatedBlog = { ...blog, user: user.id, likes: blog.likes + 1 };
       await blogService.update(id, updatedBlog);
-      setBlog(updatedBlog);
+      setBlog({...updatedBlog, user: fullUser});
       setShowLikes(updatedBlog.likes);
       dispatch(newBlogNotification("INFO: You liked the blog!"));
       setTimeout(() => {
@@ -43,7 +44,6 @@ const BlogView = () => {
   if (!blog) {
     return <div>Loading...</div>;
   }
-
   return (
     <div>
       <h2>{blog.title} by {blog.author}</h2>
@@ -51,6 +51,7 @@ const BlogView = () => {
         {blog.url}
       </a>
       <p>{showLikes} Likes <button onClick={handleAddLike}>Like</button></p>
+      <p>Added by {blog.user.name}</p>
       
     </div>
   );
