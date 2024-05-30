@@ -10,6 +10,7 @@ const BlogView = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [showLikes, setShowLikes] = useState(0);
+  const [newComment, setNewComment] = useState('');
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -24,6 +25,25 @@ const BlogView = () => {
 
     fetchBlog();
   }, [id]);
+
+  const handleComments = async () => {
+    try {
+      const updatedComments = blog.comments.concat(newComment);
+      const updatedUser = user ? user.id : null; 
+      const updatedBlog = { ...blog, user: updatedUser, comments: updatedComments };
+  
+      await blogService.update(id, updatedBlog);
+      setBlog(updatedBlog);
+      setNewComment(""); 
+      dispatch(newBlogNotification("INFO: You added a comment"));
+      setTimeout(() => {
+        dispatch(clearNotification());
+      }, 5000); 
+    } catch (error) {
+      console.error('Failed to add comments', error);
+    }
+  };
+  
 
   const handleAddLike = async () => {
     const fullUser = blog.user;
@@ -52,7 +72,7 @@ const BlogView = () => {
         {blog.url}
       </a>
       <p>{showLikes} Likes <button onClick={handleAddLike}>Like</button></p>
-      <p>Added by {blog.user.name}</p>
+      <p>Added by {blog.user ? blog.user.name : 'Unknown'}</p>
       <p>Comments:</p>
       <ul>
       {blog.comments && blog.comments.length > 0 ? (
@@ -63,7 +83,11 @@ const BlogView = () => {
           <li>No comments yet</li>
         )}
       </ul>
-      
+        <input type='text' 
+        placeholder='haven´t read this yet' 
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)} />
+        <button onClick={handleComments}>Add Comment</button>
     </div>
   );
 };
