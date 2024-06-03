@@ -1,66 +1,71 @@
-import { useState } from "react";
+import { useState } from 'react'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 
 const CreateBlog = ({ createNewBlog }) => {
-  const [newBlog, setNewBlog] = useState("");
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   const addBlog = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     createNewBlog({
       title: title,
       author: author,
       url: url,
-    });
-    setNewBlog("");
-    setAuthor("");
-    setTitle("");
-    setUrl("");
-  };
+    })
+    setAuthor('')
+    setTitle('')
+    setUrl('')
+  }
 
   return (
-    <div>
-      <div>
-        <h2>Create a New Blog</h2>
-      </div>
-      <form onSubmit={addBlog}>
-        <div>
-          Title:
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="title"
-          />
-        </div>
-        <div>
-          Author:
-          <input
-            id="author"
-            type="text"
-            value={author}
-            onChange={(event) => setAuthor(event.target.value)}
-            placeholder="author"
-          />
-        </div>
-        <div>
-          Url:
-          <input
-            id="url"
-            type="text"
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            placeholder="url"
-          />
-        </div>
-        <button id="createNewBlog" type="submit">
+    <Box sx={{ mt: 4 }}>
+      <Typography variant="h4" component="h2" gutterBottom>
+        Create a New Blog
+      </Typography>
+      <Box
+        component="form"
+        onSubmit={addBlog}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+      >
+        <TextField
+          id="title"
+          label="Title"
+          variant="outlined"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          fullWidth
+        />
+        <TextField
+          id="author"
+          label="Author"
+          variant="outlined"
+          value={author}
+          onChange={(event) => setAuthor(event.target.value)}
+          fullWidth
+        />
+        <TextField
+          id="url"
+          label="Url"
+          variant="outlined"
+          value={url}
+          onChange={(event) => setUrl(event.target.value)}
+          fullWidth
+        />
+        <Button
+          id="createNewBlog"
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
           Create
-        </button>
-      </form>
-    </div>
-  );
-};
+        </Button>
+      </Box>
+    </Box>
+  )
+}
 
-export default CreateBlog;
+export default CreateBlog

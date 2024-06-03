@@ -1,33 +1,38 @@
 import { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link, useParams, useNavigate
+  Routes,
+  Route,
+  Link,
+  useParams,
+  useNavigate,
 } from 'react-router-dom'
 import { useField } from './hooks'
-
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >
-        <Link to={`/${anecdote.id}`}>{anecdote.content}</Link>
-        </li>)}
+      {anecdotes.map((anecdote) => (
+        <li key={anecdote.id}>
+          <Link to={`/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
+      ))}
     </ul>
   </div>
 )
 
-const Anecdote = ({anecdotes}) => {
+const Anecdote = ({ anecdotes }) => {
   const id = useParams().id
-  const anecdote = anecdotes.find(n => n.id === Number(id))
-  return(
-  <div>
-    <h2>Anecdote:</h2>
-    <h3>{anecdote.content}</h3>
-    <p>Author: {anecdote.author}</p>
-    <p>{anecdote.info}</p>
-    <p>Votes: {anecdote.vote}</p>
-  </div>
+  const anecdote = anecdotes.find((n) => n.id === Number(id))
+  return (
+    <div>
+      <h2>Anecdote:</h2>
+      <h3>{anecdote.content}</h3>
+      <p>Author: {anecdote.author}</p>
+      <p>{anecdote.info}</p>
+      <p>Votes: {anecdote.vote}</p>
+    </div>
   )
 }
 
@@ -36,20 +41,31 @@ const About = () => (
     <h2>About anecdote app</h2>
     <p>According to Wikipedia:</p>
 
-    <em>An anecdote is a brief, revealing account of an individual person or an incident.
-      Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
-      such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
-      An anecdote is "a story with a point."</em>
+    <em>
+      An anecdote is a brief, revealing account of an individual person or an
+      incident. Occasionally humorous, anecdotes differ from jokes because their
+      primary purpose is not simply to provoke laughter but to reveal a truth
+      more general than the brief tale itself, such as to characterize a person
+      by delineating a specific quirk or trait, to communicate an abstract idea
+      about a person, place, or thing through the concrete details of a short
+      narrative. An anecdote is "a story with a point."
+    </em>
 
-    <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+    <p>
+      Software engineering is full of excellent anecdotes, at this app you can
+      find the best and add more.
+    </p>
   </div>
 )
 
 const Footer = () => (
   <div>
-    Anecdote app for <a href='https://fullstackopen.com/'>Full Stack Open</a>.
-
-    See <a href='https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js</a> for the source code.
+    Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>.
+    See{' '}
+    <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
+      https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js
+    </a>{' '}
+    for the source code.
   </div>
 )
 
@@ -59,15 +75,13 @@ const CreateNew = (props) => {
   const info = useField()
   const navigate = useNavigate()
 
-
-
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
       content: content.field.value,
       author: author.field.value,
       info: info.field.value,
-      votes: 0
+      votes: 0,
     })
     navigate('/')
   }
@@ -95,23 +109,23 @@ const CreateNew = (props) => {
           <input {...info.field} />
         </div>
         <button>create</button>
-        <button type="button" onClick={handleReset}>reset</button>
+        <button type="button" onClick={handleReset}>
+          reset
+        </button>
       </form>
     </div>
   )
 }
 
-const Notification = ({message}) => {
+const Notification = ({ message }) => {
   if (message === null) {
     return null
   }
-return(
-  <>
-  <div>
-    {message}
-    </div>
-  </>
-)
+  return (
+    <>
+      <div>{message}</div>
+    </>
+  )
 }
 
 const App = () => {
@@ -122,15 +136,15 @@ const App = () => {
       author: 'Jez Humble',
       info: 'https://martinfowler.com/bliki/FrequencyReducesDifficulty.html',
       votes: 0,
-      id: 1
+      id: 1,
     },
     {
       content: 'Premature optimization is the root of all evil',
       author: 'Donald Knuth',
       info: 'http://wiki.c2.com/?PrematureOptimization',
       votes: 0,
-      id: 2
-    }
+      id: 2,
+    },
   ])
 
   const [notification, setNotification] = useState('')
@@ -140,46 +154,51 @@ const App = () => {
     setAnecdotes(anecdotes.concat(anecdote))
     setNotification(`New anecdote: '${anecdote.content}'`)
     setTimeout(() => {
-    setNotification('')
-    },5000)
+      setNotification('')
+    }, 5000)
   }
 
-  const anecdoteById = (id) =>
-    anecdotes.find(a => a.id === id)
+  const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
 
   const vote = (id) => {
     const anecdote = anecdoteById(id)
 
     const voted = {
       ...anecdote,
-      votes: anecdote.votes + 1
+      votes: anecdote.votes + 1,
     }
 
-    setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
+    setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)))
   }
 
   const padding = {
-    padding: 5
+    padding: 5,
   }
 
   return (
     <Router>
-    <div>
-      <h1>Software anecdotes</h1>
-      <Notification message={notification} />
       <div>
-        <Link style={padding} to="/">Anecdotes</Link>
-        <Link style={padding} to="/about">About</Link>
-        <Link style={padding} to="/create">createNew</Link>
+        <h1>Software anecdotes</h1>
+        <Notification message={notification} />
+        <div>
+          <Link style={padding} to="/">
+            Anecdotes
+          </Link>
+          <Link style={padding} to="/about">
+            About
+          </Link>
+          <Link style={padding} to="/create">
+            createNew
+          </Link>
+        </div>
+        <Routes>
+          <Route path="/:id" element={<Anecdote anecdotes={anecdotes} />} />
+          <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/create" element={<CreateNew addNew={addNew} />} />
+        </Routes>
+        <Footer />
       </div>
-      <Routes>
-      <Route path="/:id" element={<Anecdote anecdotes={anecdotes} />} />
-        <Route path="/" element={<AnecdoteList anecdotes={anecdotes}/>} />
-        <Route path="/about" element={<About />} />
-        <Route path="/create" element={<CreateNew addNew={addNew}/>} />
-      </Routes>
-      <Footer />
-    </div>
     </Router>
   )
 }

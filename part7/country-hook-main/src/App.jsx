@@ -11,7 +11,7 @@ const useField = (type) => {
   return {
     type,
     value,
-    onChange
+    onChange,
   }
 }
 
@@ -20,9 +20,13 @@ const useCountry = (name) => {
 
   useEffect(() => {
     if (name) {
-      countryService.getAll().then(countries => {
-        const foundCountry = countries.find(country => country.name.common.toLowerCase() === name.toLowerCase())
-        setCountry(foundCountry ? { found: true, data: foundCountry } : { found: false })
+      countryService.getAll().then((countries) => {
+        const foundCountry = countries.find(
+          (country) => country.name.common.toLowerCase() === name.toLowerCase()
+        )
+        setCountry(
+          foundCountry ? { found: true, data: foundCountry } : { found: false }
+        )
       })
     }
   }, [name])
@@ -36,19 +40,19 @@ const Country = ({ country }) => {
   }
 
   if (!country.found) {
-    return (
-      <div>
-        not found...
-      </div>
-    )
+    return <div>not found...</div>
   }
 
   return (
     <div>
       <h3>{country.data.name.common} </h3>
       <div>capital {country.data.capital} </div>
-      <div>population {country.data.population}</div> 
-      <img src={country.data.flags.png} height='100' alt={`flag of ${country.data.name.common}`}/>  
+      <div>population {country.data.population}</div>
+      <img
+        src={country.data.flags.png}
+        height="100"
+        alt={`flag of ${country.data.name.common}`}
+      />
     </div>
   )
 }

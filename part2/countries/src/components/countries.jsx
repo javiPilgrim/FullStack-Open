@@ -1,4 +1,4 @@
-import Country from "./country";
+import Country from "./country"
 import TotalWeather from "./weather"
 
 const Countries = ({ countries, handle, showCountry}) => {

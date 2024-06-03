@@ -11,6 +11,10 @@
     {
       "content": "Programming is not ease",
       "id": 3
+    },
+    {
+      "content": "node is awasome",
+      "id": 4
     }
   ],
   "persons": [
@@ -28,6 +32,11 @@
       "name": "André",
       "number": "343-222-333",
       "id": 3
+    },
+    {
+      "name": "bella",
+      "number": "343-23-23-23",
+      "id": 4
     }
   ]
 }

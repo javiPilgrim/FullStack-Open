@@ -1,29 +1,29 @@
 const initialState = {
-  message: "",
-};
+  message: '',
+}
 
 const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "NEWBLOG":
-      return { ...state, message: action.payload };
-    case "CLEAR":
-      return { ...state, message: "" };
+    case 'NEWBLOG':
+      return { ...state, message: action.payload }
+    case 'CLEAR':
+      return { ...state, message: '' }
     default:
-      return state;
+      return state
   }
-};
+}
 
 export const newBlogNotification = (content) => {
   return {
-    type: "NEWBLOG",
+    type: 'NEWBLOG',
     payload: content,
-  };
-};
+  }
+}
 
 export const clearNotification = () => {
   return {
-    type: "CLEAR",
-  };
-};
+    type: 'CLEAR',
+  }
+}
 
-export default notificationReducer;
+export default notificationReducer
