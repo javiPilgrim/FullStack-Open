@@ -27,14 +27,23 @@ const handleShowButton = (myCountry)=>{ setShowCountry(myCountry) }
 
 const filterCountries = countries.filter(country => country.name.common.toLowerCase().includes(newSearch.toLowerCase()))
 
-return(
+return (
   <div className="app-container">
     <h1>Countries</h1>
     <div>
-      Find Countries: 
-      <input type='text' value={newSearch} placeholder="Your search here.." onChange={handleSearch} />
+      <label className="search-label">Find Countries:</label>
+      <input
+        type="text"
+        value={newSearch}
+        placeholder="Your search here.."
+        onChange={handleSearch}
+      />
     </div>
-    <Countries countries={filterCountries} handle={handleShowButton} showCountry={showCountry} />
+    <Countries
+      countries={filterCountries}
+      handle={handleShowButton}
+      showCountry={showCountry}
+    />
   </div>
 )
 }

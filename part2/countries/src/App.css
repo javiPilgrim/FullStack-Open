@@ -15,11 +15,38 @@ body {
 }
 
 h1 {
-  font-size: 2.5rem;
-  color: #fff;
+  font-size: 3rem;
+  background: linear-gradient(90deg, #ffeb3b, #ff5722, #4caf50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
   text-align: center;
   margin-bottom: 20px;
+  opacity: 0;  /* Inicialmente invisible */
+  animation: fadeIn 2s ease-in forwards;  /* Animación de 2 segundos */
 }
+
+/* Definir la animación */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;  /* Comienza invisible */
+    transform: translateY(-20px);  /* Leve desplazamiento hacia arriba */
+  }
+  100% {
+    opacity: 1;  /* Finaliza completamente visible */
+    transform: translateY(0);  /* Desplazamiento final */
+  }
+}
+
+
+/* Estilo para el texto de búsqueda "Find Countries:" */
+.search-label {
+  font-weight: bold;     /* Negrita */
+  font-size: 1.5rem;     /* Tamaño más grande */
+  margin-right: 10px;    /* Espacio entre el texto y el input */
+  color: #5a0404;           /* Color blanco para que destaque */
+}
+
 
 /* Estilo para el input de búsqueda */
 input[type="text"] {
@@ -47,6 +74,16 @@ input[type="text"]:hover, input[type="text"]:focus {
   border-color: #4CAF50; /* Cambia el borde cuando el campo está activo o en hover */
   box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
 }
+
+/* Estilo para las notificaciones */
+.notification {
+  font-weight: bold;    /* Negrita */
+  font-size: 1.5rem;    /* Tamaño más grande */
+  color: #5a0404;       /* Color amarillo para destacar */
+  margin: 20px 0;       /* Espacio arriba y abajo */
+  text-align: center;   /* Centrar el texto */
+}
+
 
 
 button {

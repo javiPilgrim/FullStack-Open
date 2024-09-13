@@ -4,28 +4,31 @@ import TotalWeather from "./weather"
 const Countries = ({ countries, handle, showCountry}) => {
     return (
       <>
-        {countries.length > 1 && (countries.length > 10 ? (
-            <div>Too Many matches, specify another filter</div>
-          ) : (
-            countries.map((pais) => (
-              <div key={pais.name.common}>
-                {pais.name.common}{' '}
-                <button onClick={()=>{handle(pais.name.common)}} >Ver</button>
-                {showCountry === pais.name.common ? (
-                <Country
-                  name={pais.name.common}
-                  official={pais.name.official}
-                  capital={pais.capital}
-                  population={pais.population}
-                  languages={pais.languages}
-                  src={pais.flags.png}
-                  alt={pais.flags.alt}
-                  handle={handle}
-                />
-                ) : null}
-              </div>
-            ))
-          ))}
+        {countries.length > 1 && (
+  countries.length > 10 ? (
+    <div className="notification">Too Many matches, specify another filter</div>
+  ) : (
+    countries.map((pais) => (
+      <div key={pais.name.common}>
+        {pais.name.common}{' '}
+        <button onClick={() => handle(pais.name.common)}>Ver</button>
+        {showCountry === pais.name.common ? (
+          <Country
+            name={pais.name.common}
+            official={pais.name.official}
+            capital={pais.capital}
+            population={pais.population}
+            languages={pais.languages}
+            src={pais.flags.png}
+            alt={pais.flags.alt}
+            handle={handle}
+          />
+        ) : null}
+      </div>
+    ))
+  )
+)}
+
         {countries.length === 1 && (
           <>
           <Country
