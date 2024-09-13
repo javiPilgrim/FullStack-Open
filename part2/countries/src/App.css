@@ -1,31 +1,110 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* Fondo de la aplicación */
+body {
+  background-image: url('/FondoTiempo.jpg');
+  background-size: cover;
+  background-position: center;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Estilo para el input de búsqueda */
+input[type="text"] {
+  padding: 10px;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  font-size: 1.5rem; /* Aumenta el tamaño del texto */
+  font-weight: bold; /* Hace el texto más grueso */
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+  color: #333; /* Color del texto */
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente para mejor visibilidad */
+  outline: none;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Añade una sombra para resaltar más el input */
+}
+
+input[type="text"]::placeholder {
+  color: #666; /* Cambia el color del texto del placeholder */
+  font-style: italic;
+}
+
+/* Añade un efecto hover para más interactividad */
+input[type="text"]:hover, input[type="text"]:focus {
+  border-color: #4CAF50; /* Cambia el borde cuando el campo está activo o en hover */
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+button {
+  padding: 8px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+/* Estilo para los contenedores de los países */
+.country-container {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.country-container img {
+  width: 150px;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  border-radius: 3px;
+  margin-bottom: 5px;
+}
+
+h4 {
+  color: #fff;
+}
+
+.weather-container {
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
   text-align: center;
 }
 
-
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.weather-container img {
+  width: 100px;
+  height: auto;
 }

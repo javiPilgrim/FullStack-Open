@@ -21,20 +21,21 @@ useEffect(() => {
       })
     }, [])
 
-  return(
-    <>
-      <h4>Weather:</h4>
-      {(weather.length==0) ? (
-        <><p> No hay datos meteorologicos </p> </>
-      ) : (
-        <>
-          <p>{weather.summary}</p>
-          <p>{weather.temperature}ºC</p>
-          <img src={`./src/images/${weather.icon_num}.png`} alt="Imagen del tiempo" />
-        </>
-      )}
-    </>
-  )
+    return(
+      <div className="weather-container">
+        <h4>Weather:</h4>
+        {weather.length === 0 ? (
+          <p>No hay datos meteorológicos</p>
+        ) : (
+          <>
+            <p>{weather.summary}</p>
+            <p>{weather.temperature}ºC</p>
+            <img src={`./src/images/${weather.icon_num}.png`} alt="Imagen del tiempo" />
+          </>
+        )}
+      </div>
+    )
+    
 }
 
 export default TotalWeather
