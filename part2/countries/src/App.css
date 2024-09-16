@@ -7,13 +7,25 @@ body {
   color: #333;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh; /* Permitir que el contenido crezca más allá de la pantalla */
+  display: flex; /* Aplicar flexbox al body */
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; /* Centrar verticalmente */
 }
 
+/* Contenedor principal de la aplicación */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrar elementos hijos horizontalmente */
+  justify-content: center; /* Centrar elementos hijos verticalmente */
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para resaltar el contenedor */
+}
+
+/* Estilo para el título */
 h1 {
   font-size: 3rem;
   background: linear-gradient(90deg, #ffeb3b, #ff5722, #4caf50);
@@ -22,39 +34,31 @@ h1 {
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
   text-align: center;
   margin-bottom: 20px;
-  opacity: 0;  /* Inicialmente invisible */
-  animation: fadeIn 2s ease-in forwards;  /* Animación de 2 segundos */
+  opacity: 0; /* Inicialmente invisible */
+  animation: fadeIn 2s ease-in forwards; /* Animación de 2 segundos */
 }
 
 /* Definir la animación */
 @keyframes fadeIn {
   0% {
-    opacity: 0;  /* Comienza invisible */
-    transform: translateY(-20px);  /* Leve desplazamiento hacia arriba */
+    opacity: 0; /* Comienza invisible */
+    transform: translateY(-20px); /* Leve desplazamiento hacia arriba */
   }
   100% {
-    opacity: 1;  /* Finaliza completamente visible */
-    transform: translateY(0);  /* Desplazamiento final */
+    opacity: 1; /* Finaliza completamente visible */
+    transform: translateY(0); /* Desplazamiento final */
   }
 }
-
 
 /* Estilo para el texto de búsqueda "Find Countries:" */
 .search-label {
-  font-weight: bold;     /* Negrita */
-  font-size: 1.5rem;     /* Tamaño más grande */
-  margin-right: 10px;    /* Espacio entre el texto y el input */
-  color: #5a0404;           /* Color blanco para que destaque */
+  font-weight: bold; /* Negrita */
+  font-size: 1.5rem; /* Tamaño más grande */
+  margin-right: 10px; /* Espacio entre el texto y el input */
+  color: #5a0404; /* Color para que destaque */
 }
 
-
-/* Mantener el label y el input centrados */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centrar elementos hijos horizontalmente */
-}
-
+/* Input de búsqueda */
 input[type="text"] {
   padding: 10px;
   border: 2px solid #fff;
@@ -77,15 +81,14 @@ input[type="text"]:hover, input[type="text"]:focus {
 
 /* Estilo para las notificaciones */
 .notification {
-  font-weight: bold;    /* Negrita */
-  font-size: 1.5rem;    /* Tamaño más grande */
-  color: #5a0404;       /* Color amarillo para destacar */
-  margin: 20px 0;       /* Espacio arriba y abajo */
-  text-align: center;   /* Centrar el texto */
+  font-weight: bold; /* Negrita */
+  font-size: 1.5rem; /* Tamaño más grande */
+  color: #5a0404; /* Color destacado */
+  margin: 20px 0; /* Espacio arriba y abajo */
+  text-align: center; /* Centrar el texto */
 }
 
-
-
+/* Botones generales */
 button {
   padding: 8px 15px;
   background-color: #4CAF50;
@@ -132,6 +135,7 @@ h4 {
   color: #fff;
 }
 
+/* Contenedor de información del clima */
 .weather-container {
   margin-top: 20px;
   background-color: rgba(0, 0, 0, 0.6);
@@ -173,8 +177,8 @@ h4 {
 
 /* Contenedor del texto informativo */
 .info-text {
-  font-size: 0.9rem; /* Cambia este valor para ajustar el tamaño de la fuente */
-  line-height: 1.5; /* Opcional: mejora la legibilidad del texto */
+  font-size: 0.9rem; /* Ajustar el tamaño de la fuente */
+  line-height: 1.5; /* Mejora la legibilidad del texto */
   color: #333; /* Color del texto */
   background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
   padding: 15px;
@@ -202,13 +206,13 @@ h4 {
 
 /* Contenedor para cada país */
 .country-item {
-  display: flex;            /* Para alinear el nombre del país y el botón horizontalmente */
+  display: flex; /* Alinear el nombre del país y el botón horizontalmente */
   justify-content: space-between;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
   padding: 10px;
-  margin: 10px 0;           /* Espacio entre cada país */
-  border-radius: 5px;       /* Bordes redondeados */
+  margin: 10px 0; /* Espacio entre cada país */
+  border-radius: 5px; /* Bordes redondeados */
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Sombra para dar efecto de elevación */
 }
 
@@ -217,7 +221,7 @@ h4 {
   font-size: 1.2rem;
   font-weight: bold;
   color: #333;
-  margin-right: 20px;       /* Espacio a la derecha del nombre */
+  margin-right: 20px; /* Espacio a la derecha del nombre */
 }
 
 /* Botón "Ver" */
@@ -234,5 +238,3 @@ h4 {
 .country-button:hover {
   background-color: #45a049; /* Cambia el color del botón cuando el ratón pasa por encima */
 }
-
-
