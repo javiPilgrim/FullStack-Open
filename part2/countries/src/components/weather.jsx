@@ -31,7 +31,7 @@ const TotalWeather = ({ capital }) => {
         <>
           <p>{weather.summary}</p>
           <p>{weather.temperature}ºC</p>
-          <img src={`./src/images/${weather.icon_num}.png`} alt="Imagen del tiempo" />
+          <img src={`images/${weather.icon_num}.png`} alt="Imagen del tiempo" />
         </>
       )}
     </div>
