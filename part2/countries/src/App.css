@@ -200,3 +200,39 @@ h4 {
   background-color: #e64a19;
 }
 
+/* Contenedor para cada país */
+.country-item {
+  display: flex;            /* Para alinear el nombre del país y el botón horizontalmente */
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
+  padding: 10px;
+  margin: 10px 0;           /* Espacio entre cada país */
+  border-radius: 5px;       /* Bordes redondeados */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Sombra para dar efecto de elevación */
+}
+
+/* Estilo para el nombre del país */
+.country-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin-right: 20px;       /* Espacio a la derecha del nombre */
+}
+
+/* Botón "Ver" */
+.country-button {
+  padding: 8px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Transición suave al pasar el ratón por encima */
+}
+
+.country-button:hover {
+  background-color: #45a049; /* Cambia el color del botón cuando el ratón pasa por encima */
+}
+
+
