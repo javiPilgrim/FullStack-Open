@@ -1,5 +1,5 @@
-const { ApolloServer } = require('@apollo/server')
-const { startStandaloneServer } = require('@apollo/server/standalone')
+const { ApolloServer } = require('@apollo/server');
+const { startStandaloneServer } = require('@apollo/server/standalone');
 
 let authors = [
   {
@@ -25,21 +25,7 @@ let authors = [
     name: 'Sandi Metz', // birthyear not known
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
-]
-
-/*
- * Suomi:
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
- *
- * English:
- * It might make more sense to associate a book with its author by storing the author's id in the context of the book instead of the author's name
- * However, for simplicity, we will store the author's name in connection with the book
- *
- * Spanish:
- * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
- * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conexión con el libro
-*/
+];
 
 let books = [
   {
@@ -91,11 +77,7 @@ let books = [
     id: "afa5de04-344d-11e9-a414-719c6709cf3e",
     genres: ['classic', 'revolution']
   },
-]
-
-/*
-  you can remove the placeholder query once your first one has been implemented 
-*/
+];
 
 const typeDefs = `
   type Author {
@@ -116,36 +98,46 @@ const typeDefs = `
   type Query {
     authorCount: Int!
     allAuthors: [Author!]
-    authorBooks(author: String!): [Book!]!
+    allBooks(author: String, genres: String): [Book!]!
     bookCount: Int!
-    allBooks: [Book!]!
   }
-`
+`;
 
 const resolvers = {
   Query: {
     authorCount: () => authors.length,
     allAuthors: () => authors,
-    authorBooks: (parent, args) => {
-        return books.filter(book => book.author === args.author)
+    allBooks: (parent, args) => {
+      let filteredBooks = books;
+
+      // Filtrar por autor si se proporciona
+      if (args.author) {
+        filteredBooks = filteredBooks.filter(book => book.author === args.author);
+      }
+
+      // Filtrar por género si se proporciona
+      if (args.genres) {
+        filteredBooks = filteredBooks.filter(book => book.genres.includes(args.genres));
+      }
+
+      return filteredBooks;
     },
     bookCount: () => books.length,
-    allBooks: () => books,
   },
   Author: {
     bookCount: (parent) => {
-        return books.filter(book => book.author === parent.name).length
+      return books.filter(book => book.author === parent.name).length;
     }
   }
-}
+};
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-})
+});
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
 }).then(({ url }) => {
-  console.log(`Server ready at ${url}`)
-})
+  console.log(`Server ready at ${url}`);
+});
