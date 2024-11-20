@@ -96,12 +96,13 @@ const typeDefs = `
     genres: [String]
   }
 
-  type Query {
-    authorCount: Int!
-    allAuthors: [Author!]
-    allBooks(author: String, genres: String): [Book!]!
-    bookCount: Int!
-  }
+type Query {
+  authorCount: Int!
+  allAuthors: [Author!]
+  allBooks(author: String, genre: String): [Book!]!
+  bookCount: Int!
+}
+
 
   type Mutation {
   addBook(
@@ -132,8 +133,8 @@ const resolvers = {
       }
 
       // Filtrar por género si se proporciona
-      if (args.genres) {
-        filteredBooks = filteredBooks.filter(book => book.genres.includes(args.genres));
+      if (args.genre) {
+        filteredBooks = filteredBooks.filter(book => book.genres.includes(args.genre));
       }
 
       return filteredBooks;
@@ -147,29 +148,46 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
-
-      let author = authors.find(a => a.name === args.name)
-      if(!author) {
+      // Crear un nuevo libro con un ID único
+      const newBook = { ...args, id: uuid() };
+      books = books.concat(newBook);
+  
+      // Verificar si el autor ya existe
+      let author = authors.find(a => a.name === args.author);
+      if (!author) {
+        // Si el autor no existe, agregarlo con `born` como null
         const newAuthor = {
           name: args.author,
           born: null,
-          id: uuid()
-        }
-        authors = authors.concat(newAuthor)
+          id: uuid(),
+        };
+        authors = authors.concat(newAuthor);
       }
-      return book
+  
+      // Retornar el libro recién agregado
+      return newBook;
     },
+  },
 
+  Mutation: {
     editAuthor: (root, args) => {
-      let author = authors.find(a => a.name === args.name)
-      if(!author) return null
-      author.born = args.setBornTo
-      return author
-    }
-  }
+      // Buscar el autor por nombre
+      const author = authors.find(a => a.name === args.name);
+  
+      // Si no se encuentra el autor, devolver null
+      if (!author) {
+        return null;
+      }
+  
+      // Actualizar el campo `born` con el nuevo valor
+      author.born = args.setBornTo;
+  
+      // Retornar el autor actualizado
+      return author;
+    },
+  },
 };
+
 
 const server = new ApolloServer({
   typeDefs,
