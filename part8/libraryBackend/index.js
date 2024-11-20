@@ -148,14 +148,11 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
-      // Crear un nuevo libro con un ID único
       const newBook = { ...args, id: uuid() };
       books = books.concat(newBook);
-  
-      // Verificar si el autor ya existe
+
       let author = authors.find(a => a.name === args.author);
       if (!author) {
-        // Si el autor no existe, agregarlo con `born` como null
         const newAuthor = {
           name: args.author,
           born: null,
@@ -163,30 +160,22 @@ const resolvers = {
         };
         authors = authors.concat(newAuthor);
       }
-  
-      // Retornar el libro recién agregado
-      return newBook;
-    },
-  },
 
-  Mutation: {
+      return newBook; // Asegúrate de devolver el nuevo libro aquí.
+    },
     editAuthor: (root, args) => {
-      // Buscar el autor por nombre
       const author = authors.find(a => a.name === args.name);
-  
-      // Si no se encuentra el autor, devolver null
+
       if (!author) {
         return null;
       }
-  
-      // Actualizar el campo `born` con el nuevo valor
+
       author.born = args.setBornTo;
-  
-      // Retornar el autor actualizado
       return author;
     },
   },
 };
+
 
 
 const server = new ApolloServer({
