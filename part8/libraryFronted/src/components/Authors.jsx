@@ -1,8 +1,9 @@
 import { useState } from "react";
+import Select from "react-select"; // Importar react-select
 import { gql, useMutation } from "@apollo/client";
 
-const ALL_AUTHORS = gql`
-  query {
+export const ALL_AUTHORS = gql`
+  query ALL_AUTHORS {
     allAuthors {
       name
       born
@@ -21,28 +22,40 @@ const EDIT_AUTHOR = gql`
 `;
 
 const Authors = ({ show, authors }) => {
-  const [name, setName] = useState("");
+  const [selectedAuthor, setSelectedAuthor] = useState(null); // Autor seleccionado
   const [year, setYear] = useState("");
 
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    refetchQueries: [{ query: ALL_AUTHORS }], // Pasa la consulta directamente
   });
+  
 
   if (!show) {
     return null;
   }
 
+  // Formatear opciones para react-select
+  const authorOptions = authors.map((author) => ({
+    value: author.name,
+    label: author.name,
+  }));
+
   const submit = async (event) => {
     event.preventDefault();
 
+    if (!selectedAuthor) {
+      alert("Please select an author");
+      return;
+    }
+
     await editAuthor({
       variables: {
-        name,
+        name: selectedAuthor.value,
         setBornTo: parseInt(year, 10),
       },
     });
 
-    setName("");
+    setSelectedAuthor(null);
     setYear("");
   };
 
@@ -70,16 +83,12 @@ const Authors = ({ show, authors }) => {
       <form onSubmit={submit}>
         <div>
           <label>Author</label>
-          <select value={name} onChange={(e) => setName(e.target.value)}>
-            <option value="" disabled>
-              Select author
-            </option>
-            {authors.map((a) => (
-              <option key={a.name} value={a.name}>
-                {a.name}
-              </option>
-            ))}
-          </select>
+          <Select
+            value={selectedAuthor}
+            onChange={setSelectedAuthor} // Manejar la selección
+            options={authorOptions} // Pasar las opciones
+            placeholder="Select an author..."
+          />
         </div>
         <div>
           <label>Year of birth</label>
