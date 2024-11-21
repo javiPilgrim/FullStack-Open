@@ -1,15 +1,22 @@
-const { ApolloServer } = require('@apollo/server');
+const { ApolloServer, GraphQLError } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 // Importar modelos
 const Book = require('./models/book');
 const Author = require('./models/author');
+const User = require('./models/user');
 
-// Configurar conexión con MongoDB
+// Configuración de MongoDB
 mongoose.set('strictQuery', false);
 const MONGODB_URI = process.env.MONGODB_URI;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!MONGODB_URI || !JWT_SECRET) {
+  throw new Error('MONGODB_URI or JWT_SECRET is not defined in .env file');
+}
 
 console.log('connecting to', MONGODB_URI);
 
@@ -38,11 +45,22 @@ const typeDefs = `
     genres: [String!]
   }
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     authorCount: Int!
     allAuthors: [Author!]
     allBooks(author: String, genre: String): [Book!]!
     bookCount: Int!
+    me: User
   }
 
   type Mutation {
@@ -57,19 +75,25 @@ const typeDefs = `
       name: String!
       setBornTo: Int!
     ): Author
+
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `;
 
 // Resolvers de GraphQL
 const resolvers = {
   Query: {
-    // Cantidad total de autores
     authorCount: async () => Author.collection.countDocuments(),
-    // Cantidad total de libros
     bookCount: async () => Book.collection.countDocuments(),
-    // Obtener todos los autores
     allAuthors: async () => Author.find({}),
-    // Obtener todos los libros con filtros opcionales (por autor o género)
     allBooks: async (root, args) => {
       let query = {};
       if (args.author) {
@@ -81,46 +105,132 @@ const resolvers = {
       }
       return Book.find(query).populate('author');
     },
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
   },
   Author: {
-    // Contar la cantidad de libros escritos por el autor
     bookCount: async (root) => Book.countDocuments({ author: root._id }),
   },
   Mutation: {
-    // Agregar un nuevo libro
-    addBook: async (root, args) => {
-      // Verificar si el autor ya existe
-      let author = await Author.findOne({ name: args.author });
-
-      // Si no existe, crearlo
-      if (!author) {
-        author = new Author({ name: args.author });
-        await author.save();
+    addBook: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError('Not authenticated', {
+          extensions: { code: 'UNAUTHENTICATED' },
+        });
       }
 
-      // Crear el nuevo libro con referencia al autor
-      const newBook = new Book({ ...args, author: author._id });
-      await newBook.save();
-      return newBook.populate('author'); // Retornar el libro con los datos del autor
+      try {
+        let author = await Author.findOne({ name: args.author });
+
+        if (!author) {
+          author = new Author({ name: args.author });
+          await author.save();
+        }
+
+        const newBook = new Book({ ...args, author: author._id });
+        await newBook.save();
+        return newBook.populate('author');
+      } catch (error) {
+        if (error.name === 'ValidationError') {
+          throw new GraphQLError('Validation Error: ' + error.message, {
+            extensions: { code: 'BAD_USER_INPUT' },
+          });
+        }
+        throw new GraphQLError('Internal Server Error', {
+          extensions: { code: 'INTERNAL_SERVER_ERROR' },
+        });
+      }
     },
-    // Editar el año de nacimiento de un autor
-    editAuthor: async (root, args) => {
-      const author = await Author.findOneAndUpdate(
-        { name: args.name },
-        { born: args.setBornTo },
-        { new: true } // Retornar el documento actualizado
-      );
-      return author;
+    editAuthor: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError('Not authenticated', {
+          extensions: { code: 'UNAUTHENTICATED' },
+        });
+      }
+
+      try {
+        const author = await Author.findOneAndUpdate(
+          { name: args.name },
+          { born: args.setBornTo },
+          { new: true }
+        );
+
+        if (!author) {
+          throw new GraphQLError('Author not found', {
+            extensions: { code: 'NOT_FOUND' },
+          });
+        }
+
+        return author;
+      } catch (error) {
+        if (error.name === 'ValidationError') {
+          throw new GraphQLError('Validation Error: ' + error.message, {
+            extensions: { code: 'BAD_USER_INPUT' },
+          });
+        }
+        throw new GraphQLError('Internal Server Error', {
+          extensions: { code: 'INTERNAL_SERVER_ERROR' },
+        });
+      }
+    },
+    createUser: async (root, args) => {
+      const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre });
+
+      try {
+        await user.save();
+        return user;
+      } catch (error) {
+        if (error.name === 'ValidationError') {
+          throw new GraphQLError('Validation Error: ' + error.message, {
+            extensions: { code: 'BAD_USER_INPUT' },
+          });
+        }
+        throw new GraphQLError('Internal Server Error', {
+          extensions: { code: 'INTERNAL_SERVER_ERROR' },
+        });
+      }
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== 'secret') { // Contraseña fija
+        throw new GraphQLError('Invalid username or password', {
+          extensions: { code: 'BAD_USER_INPUT' },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, JWT_SECRET) };
     },
   },
 };
 
-// Crear y configurar el servidor Apollo
+// Configuración del servidor
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }) => {
+    const auth = req.headers.authorization || '';
+    if (auth.startsWith('Bearer ')) {
+      const token = auth.substring(7);
+      try {
+        const decodedToken = jwt.verify(token, JWT_SECRET);
+        const currentUser = await User.findById(decodedToken.id);
+        return { currentUser };
+      } catch {
+        return {};
+      }
+    }
+    return {};
+  },
 });
 
+// Iniciar el servidor
 startStandaloneServer(server, {
   listen: { port: 4000 },
 }).then(({ url }) => {
