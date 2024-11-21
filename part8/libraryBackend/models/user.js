@@ -11,6 +11,12 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  password: { // Mantener la contraseña en texto plano
+    type: String,
+    required: true,
+    minlength: 6,
+  },
 });
 
 module.exports = mongoose.model('User', schema);
+

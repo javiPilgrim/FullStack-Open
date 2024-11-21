@@ -1,57 +1,44 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import { gql, useQuery } from "@apollo/client";
 
-const ALL_AUTHORS = gql`
-  query {
-    allAuthors {
-      name
-      born
-      bookCount
-    }
-  }
-`;
-
-const ALL_BOOKS = gql`
-  query {
-    allBooks {
-      title
-      author {
-        name
-      }
-      published
-    }
-  }
-`;
-
 const App = () => {
   const [page, setPage] = useState("authors");
+  const navigate = useNavigate();
+  const isAuthenticated = localStorage.getItem("token");
 
-  const authorsResult = useQuery(ALL_AUTHORS);
-  const booksResult = useQuery(ALL_BOOKS);
-
-  if (authorsResult.loading || booksResult.loading) {
-    return <div>loading...</div>;
-  }
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <div>
       <div>
-        <button onClick={() => setPage("authors")}>authors</button>
-        <button onClick={() => setPage("books")}>books</button>
-        <button onClick={() => setPage("add")}>add book</button>
+        {isAuthenticated ? (
+          <>
+            <button onClick={() => setPage("authors")}>authors</button>
+            <button onClick={() => setPage("books")}>books</button>
+            <button onClick={() => setPage("add")}>add book</button>
+            <button onClick={logout}>Logout</button>
+          </>
+        ) : (
+          <button onClick={() => navigate("/login")}>Login</button>
+        )}
       </div>
 
-      <Authors
-        show={page === "authors"}
-        authors={authorsResult.data.allAuthors}
-      />
-
-      <Books show={page === "books"} books={booksResult.data.allBooks} />
-
-      <NewBook show={page === "add"} />
+      {isAuthenticated ? (
+        <>
+          <Authors show={page === "authors"} />
+          <Books show={page === "books"} />
+          <NewBook show={page === "add"} />
+        </>
+      ) : (
+        <p>Please log in to access the functionality</p>
+      )}
     </div>
   );
 };

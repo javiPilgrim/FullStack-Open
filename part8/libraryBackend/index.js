@@ -1,4 +1,4 @@
-const { ApolloServer, GraphQLError } = require('@apollo/server');
+const { ApolloServer, AuthenticationError } = require('@apollo/server'); // Importar AuthenticationError
 const { startStandaloneServer } = require('@apollo/server/standalone');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
@@ -79,6 +79,7 @@ const typeDefs = `
     createUser(
       username: String!
       favoriteGenre: String!
+      password: String!  # Incluir password en la mutación createUser
     ): User
 
     login(
@@ -115,97 +116,64 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args, context) => {
       if (!context.currentUser) {
-        throw new GraphQLError('Not authenticated', {
-          extensions: { code: 'UNAUTHENTICATED' },
-        });
+        throw new AuthenticationError('Not authenticated');
       }
 
-      try {
-        let author = await Author.findOne({ name: args.author });
+      let author = await Author.findOne({ name: args.author });
 
-        if (!author) {
-          author = new Author({ name: args.author });
-          await author.save();
-        }
-
-        const newBook = new Book({ ...args, author: author._id });
-        await newBook.save();
-        return newBook.populate('author');
-      } catch (error) {
-        if (error.name === 'ValidationError') {
-          throw new GraphQLError('Validation Error: ' + error.message, {
-            extensions: { code: 'BAD_USER_INPUT' },
-          });
-        }
-        throw new GraphQLError('Internal Server Error', {
-          extensions: { code: 'INTERNAL_SERVER_ERROR' },
-        });
+      if (!author) {
+        author = new Author({ name: args.author });
+        await author.save();
       }
+
+      const newBook = new Book({ ...args, author: author._id });
+      await newBook.save();
+      return newBook.populate('author');
     },
     editAuthor: async (root, args, context) => {
       if (!context.currentUser) {
-        throw new GraphQLError('Not authenticated', {
-          extensions: { code: 'UNAUTHENTICATED' },
-        });
+        throw new AuthenticationError('Not authenticated');
       }
 
-      try {
-        const author = await Author.findOneAndUpdate(
-          { name: args.name },
-          { born: args.setBornTo },
-          { new: true }
-        );
+      const author = await Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setBornTo },
+        { new: true }
+      );
 
-        if (!author) {
-          throw new GraphQLError('Author not found', {
-            extensions: { code: 'NOT_FOUND' },
-          });
-        }
-
-        return author;
-      } catch (error) {
-        if (error.name === 'ValidationError') {
-          throw new GraphQLError('Validation Error: ' + error.message, {
-            extensions: { code: 'BAD_USER_INPUT' },
-          });
-        }
-        throw new GraphQLError('Internal Server Error', {
-          extensions: { code: 'INTERNAL_SERVER_ERROR' },
-        });
+      if (!author) {
+        throw new Error('Author not found');
       }
+
+      return author;
     },
     createUser: async (root, args) => {
-      const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre });
-
+      const { username, favoriteGenre, password } = args; // Debes asegurarte de que la contraseña esté incluida
+    
+      const user = new User({
+        username,
+        favoriteGenre,
+        password,  // Agregar el campo de contraseña en el modelo User
+      });
+    
       try {
         await user.save();
         return user;
       } catch (error) {
-        if (error.name === 'ValidationError') {
-          throw new GraphQLError('Validation Error: ' + error.message, {
-            extensions: { code: 'BAD_USER_INPUT' },
-          });
-        }
-        throw new GraphQLError('Internal Server Error', {
-          extensions: { code: 'INTERNAL_SERVER_ERROR' },
-        });
+        console.error("Error creating user:", error);
+        throw new Error("Error creating user");
       }
     },
+    
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username });
-
-      if (!user || args.password !== 'secret') { // Contraseña fija
-        throw new GraphQLError('Invalid username or password', {
-          extensions: { code: 'BAD_USER_INPUT' },
-        });
+      if (!user || user.password !== args.password) {  // Comparar la contraseña en texto plano
+        throw new AuthenticationError('Invalid credentials');
       }
 
-      const userForToken = {
-        username: user.username,
-        id: user._id,
-      };
-
-      return { value: jwt.sign(userForToken, JWT_SECRET) };
+      // Generar el token JWT
+      const token = jwt.sign({ username: user.username, id: user.id }, process.env.JWT_SECRET);
+      return { value: token };
     },
   },
 };
