@@ -1,85 +1,27 @@
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
-const { v1: uuid } = require('uuid')
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-let authors = [
-  {
-    name: 'Robert Martin',
-    id: "afa51ab0-344d-11e9-a414-719c6709cf3e",
-    born: 1952,
-  },
-  {
-    name: 'Martin Fowler',
-    id: "afa5b6f0-344d-11e9-a414-719c6709cf3e",
-    born: 1963
-  },
-  {
-    name: 'Fyodor Dostoevsky',
-    id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
-    born: 1821
-  },
-  { 
-    name: 'Joshua Kerievsky', // birthyear not known
-    id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
-  },
-  { 
-    name: 'Sandi Metz', // birthyear not known
-    id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
-  },
-];
+// Importar modelos
+const Book = require('./models/book');
+const Author = require('./models/author');
 
-let books = [
-  {
-    title: 'Clean Code',
-    published: 2008,
-    author: 'Robert Martin',
-    id: "afa5b6f4-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring']
-  },
-  {
-    title: 'Agile software development',
-    published: 2002,
-    author: 'Robert Martin',
-    id: "afa5b6f5-344d-11e9-a414-719c6709cf3e",
-    genres: ['agile', 'patterns', 'design']
-  },
-  {
-    title: 'Refactoring, edition 2',
-    published: 2018,
-    author: 'Martin Fowler',
-    id: "afa5de00-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring']
-  },
-  {
-    title: 'Refactoring to patterns',
-    published: 2008,
-    author: 'Joshua Kerievsky',
-    id: "afa5de01-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring', 'patterns']
-  },  
-  {
-    title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
-    published: 2012,
-    author: 'Sandi Metz',
-    id: "afa5de02-344d-11e9-a414-719c6709cf3e",
-    genres: ['refactoring', 'design']
-  },
-  {
-    title: 'Crime and punishment',
-    published: 1866,
-    author: 'Fyodor Dostoevsky',
-    id: "afa5de03-344d-11e9-a414-719c6709cf3e",
-    genres: ['classic', 'crime']
-  },
-  {
-    title: 'Demons',
-    published: 1872,
-    author: 'Fyodor Dostoevsky',
-    id: "afa5de04-344d-11e9-a414-719c6709cf3e",
-    genres: ['classic', 'revolution']
-  },
-];
+// Configurar conexión con MongoDB
+mongoose.set('strictQuery', false);
+const MONGODB_URI = process.env.MONGODB_URI;
 
+console.log('connecting to', MONGODB_URI);
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB');
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message);
+  });
+
+// Definición de tipos GraphQL
 const typeDefs = `
   type Author {
     name: String!
@@ -90,94 +32,90 @@ const typeDefs = `
 
   type Book {
     title: String!
-    published: Int
-    author: String
+    published: Int!
+    author: Author!
     id: ID!
-    genres: [String]
+    genres: [String!]
   }
 
-type Query {
-  authorCount: Int!
-  allAuthors: [Author!]
-  allBooks(author: String, genre: String): [Book!]!
-  bookCount: Int!
-}
-
+  type Query {
+    authorCount: Int!
+    allAuthors: [Author!]
+    allBooks(author: String, genre: String): [Book!]!
+    bookCount: Int!
+  }
 
   type Mutation {
-  addBook(
-    title: String!
-    published: Int
-    author: String
-    genres: [String]
-  ): Book
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]
+    ): Book
 
-  editAuthor(
-    name: String!
-    setBornTo: Int!
-  ): Author
-
-}
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): Author
+  }
 `;
 
+// Resolvers de GraphQL
 const resolvers = {
   Query: {
-    authorCount: () => authors.length,
-    allAuthors: () => authors,
-    allBooks: (parent, args) => {
-      let filteredBooks = books;
-
-      // Filtrar por autor si se proporciona
+    // Cantidad total de autores
+    authorCount: async () => Author.collection.countDocuments(),
+    // Cantidad total de libros
+    bookCount: async () => Book.collection.countDocuments(),
+    // Obtener todos los autores
+    allAuthors: async () => Author.find({}),
+    // Obtener todos los libros con filtros opcionales (por autor o género)
+    allBooks: async (root, args) => {
+      let query = {};
       if (args.author) {
-        filteredBooks = filteredBooks.filter(book => book.author === args.author);
+        const author = await Author.findOne({ name: args.author });
+        if (author) query.author = author._id;
       }
-
-      // Filtrar por género si se proporciona
       if (args.genre) {
-        filteredBooks = filteredBooks.filter(book => book.genres.includes(args.genre));
+        query.genres = { $in: [args.genre] };
       }
-
-      return filteredBooks;
+      return Book.find(query).populate('author');
     },
-    bookCount: () => books.length,
   },
   Author: {
-    bookCount: (parent) => {
-      return books.filter(book => book.author === parent.name).length;
-    }
+    // Contar la cantidad de libros escritos por el autor
+    bookCount: async (root) => Book.countDocuments({ author: root._id }),
   },
   Mutation: {
-    addBook: (root, args) => {
-      const newBook = { ...args, id: uuid() };
-      books = books.concat(newBook);
+    // Agregar un nuevo libro
+    addBook: async (root, args) => {
+      // Verificar si el autor ya existe
+      let author = await Author.findOne({ name: args.author });
 
-      let author = authors.find(a => a.name === args.author);
+      // Si no existe, crearlo
       if (!author) {
-        const newAuthor = {
-          name: args.author,
-          born: null,
-          id: uuid(),
-        };
-        authors = authors.concat(newAuthor);
+        author = new Author({ name: args.author });
+        await author.save();
       }
 
-      return newBook; // Asegúrate de devolver el nuevo libro aquí.
+      // Crear el nuevo libro con referencia al autor
+      const newBook = new Book({ ...args, author: author._id });
+      await newBook.save();
+      return newBook.populate('author'); // Retornar el libro con los datos del autor
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(a => a.name === args.name);
-
-      if (!author) {
-        return null;
-      }
-
-      author.born = args.setBornTo;
+    // Editar el año de nacimiento de un autor
+    editAuthor: async (root, args) => {
+      const author = await Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setBornTo },
+        { new: true } // Retornar el documento actualizado
+      );
       return author;
     },
   },
 };
 
-
-
+// Crear y configurar el servidor Apollo
 const server = new ApolloServer({
   typeDefs,
   resolvers,
