@@ -13,7 +13,9 @@ const ALL_BOOKS = gql`
 `;
 
 const Books = (props) => {
-  const { data, loading, error } = useQuery(ALL_BOOKS);
+  const { data, loading, error } = useQuery(ALL_BOOKS, {
+    fetchPolicy: 'network-only', // Asegurarse de que no se use cache
+  });
 
   if (!props.show) {
     return null;
@@ -24,15 +26,16 @@ const Books = (props) => {
   }
 
   if (error) {
+    console.error('Error fetching books:', error);
     return <div>Error: {error.message}</div>;
   }
 
-  const books = data.allBooks;
+
+  const books = data?.allBooks || [];
 
   return (
     <div>
       <h2>Books</h2>
-
       <table>
         <tbody>
           <tr>

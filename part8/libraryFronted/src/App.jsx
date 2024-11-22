@@ -19,12 +19,12 @@ const App = () => {
     <div>
       <div>
         {isAuthenticated ? (
-          <>
-            <button onClick={() => setPage("authors")}>authors</button>
-            <button onClick={() => setPage("books")}>books</button>
-            <button onClick={() => setPage("add")}>add book</button>
-            <button onClick={logout}>Logout</button>
-          </>
+          <div>
+          <button onClick={() => { setPage("authors"); }}>authors</button>
+          <button onClick={() => { setPage("books");  }}>books</button>
+          <button onClick={() => { setPage("add");  }}>add book</button>
+          <button onClick={logout}>Logout</button>
+        </div>
         ) : (
           <button onClick={() => navigate("/login")}>Login</button>
         )}

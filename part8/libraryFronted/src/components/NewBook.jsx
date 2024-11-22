@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import React, { useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 
 const ADD_BOOK = gql`
   mutation addBook($title: String!, $published: Int!, $author: String!, $genres: [String!]) {
@@ -14,35 +14,69 @@ const ADD_BOOK = gql`
 `;
 
 const NewBook = () => {
-  const [title, setTitle] = useState("");
-  const [published, setPublished] = useState("");
-  const [author, setAuthor] = useState("");
+  const [title, setTitle] = useState('');
+  const [published, setPublished] = useState('');
+  const [author, setAuthor] = useState('');
   const [genres, setGenres] = useState([]);
-  const [addBook] = useMutation(ADD_BOOK);
+  const [addBook, { loading, error }] = useMutation(ADD_BOOK, {
+    onError: (err) => {
+      console.error('Error adding book:', err);
+      alert(`Error: ${err.message}`);
+    },
+    onCompleted: (data) => {
+      console.log('Book added successfully:', data);
+      alert('Book added successfully!');
+      resetForm();
+    },
+  });
 
-  const token = localStorage.getItem("token");
+  const resetForm = () => {
+    setTitle('');
+    setPublished('');
+    setAuthor('');
+    setGenres([]);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!token) {
-      alert("You must be logged in to add a book.");
+    console.log('Formulario enviado con los siguientes datos:');
+    console.log({ title, published, author, genres });
+
+    // Validación de campos
+    if (!title || !author || !published || isNaN(parseInt(published, 10))) {
+      alert('Please fill in all fields correctly.');
       return;
     }
 
-    await addBook({
-      variables: {
-        title,
-        published: parseInt(published),
-        author,
-        genres,
-      },
-    });
+    // Comprobación del token y los encabezados
+    const token = localStorage.getItem('token');  // O usa el almacenamiento adecuado según tu aplicación
+    if (!token) {
+      alert('No token found, please log in first.');
+      return;
+    }
 
-    setTitle("");
-    setPublished("");
-    setAuthor("");
-    setGenres([]);
+    // Comprobación de la solicitud de GraphQL antes de enviarla
+    try {
+
+      const response = await addBook({
+        variables: {
+          title,
+          published: parseInt(published, 10),
+          author,
+          genres,
+        },
+        context: {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      });
+
+      console.log('Respuesta de la mutación GraphQL:', response);
+    } catch (err) {
+      console.error('Error al hacer la mutación:', err);
+    }
   };
 
   return (
@@ -55,6 +89,7 @@ const NewBook = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            disabled={loading}
           />
         </div>
         <div>
@@ -63,6 +98,7 @@ const NewBook = () => {
             type="text"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
+            disabled={loading}
           />
         </div>
         <div>
@@ -71,18 +107,28 @@ const NewBook = () => {
             type="number"
             value={published}
             onChange={(e) => setPublished(e.target.value)}
+            disabled={loading}
           />
         </div>
         <div>
-          <label>Genres</label>
+          <label>Genres (comma-separated)</label>
           <input
             type="text"
-            value={genres}
-            onChange={(e) => setGenres(e.target.value.split(","))}
+            value={genres.join(',')}
+            onChange={(e) => setGenres(e.target.value.split(','))}
+            disabled={loading}
           />
         </div>
-        <button type="submit">Add Book</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Adding...' : 'Add Book'}
+        </button>
       </form>
+
+      {error && (
+        <div style={{ color: 'red' }}>
+          <p>Error: {error.message}</p>
+        </div>
+      )}
     </div>
   );
 };

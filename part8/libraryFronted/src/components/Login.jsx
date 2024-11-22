@@ -24,10 +24,10 @@ const Login = () => {
         variables: { username, password },
       });
       localStorage.setItem("token", data.login.value); // Almacenar el token
-      navigate("/"); // Redirigir a la página principal
+      console.log("Token saved in localStorage:", data.login.value);
+      navigate("/"); // Redirigir a la página principal después de iniciar sesión
     } catch (error) {
       console.error("Error al iniciar sesión:", error.message);
-      alert("Error al iniciar sesión. Verifica tus credenciales.");
     }
   };
 

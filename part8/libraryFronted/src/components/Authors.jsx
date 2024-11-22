@@ -25,33 +25,32 @@ const Authors = ({ show }) => {
   const [selectedAuthor, setSelectedAuthor] = useState(null); // Autor seleccionado
   const [year, setYear] = useState("");
 
-  const { loading, error, data } = useQuery(ALL_AUTHORS);
-
-  const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }], // Pasa la consulta directamente
+  const { loading, error, data } = useQuery(ALL_AUTHORS, {
+    fetchPolicy: 'network-only', // Asegurarse de que no se use cache
   });
 
-  // Si no debe mostrarse el componente, retornamos null
+  const [editAuthor] = useMutation(EDIT_AUTHOR, {
+    refetchQueries: [{ query: ALL_AUTHORS }], // Refrescar la consulta
+  });
+
   if (!show) {
     return null;
   }
 
-  // Si está cargando, mostramos un mensaje
   if (loading) {
     return <div>Loading authors...</div>;
   }
 
-  // Si hay un error en la consulta, lo mostramos
   if (error) {
+    console.error("Error fetching authors:", error); // Mostrar el error en la consola
     return <div>Error: {error.message}</div>;
   }
 
-  // Si no hay datos, mostramos un mensaje alternativo
   if (!data || !data.allAuthors) {
     return <div>No authors found</div>;
   }
 
-  // Formatear opciones para react-select
+
   const authorOptions = data.allAuthors.map((author) => ({
     value: author.name,
     label: author.name,
@@ -65,15 +64,19 @@ const Authors = ({ show }) => {
       return;
     }
 
-    await editAuthor({
-      variables: {
-        name: selectedAuthor.value,
-        setBornTo: parseInt(year, 10),
-      },
-    });
+    try {
+      await editAuthor({
+        variables: {
+          name: selectedAuthor.value,
+          setBornTo: parseInt(year, 10),
+        },
+      });
 
-    setSelectedAuthor(null);
-    setYear("");
+      setSelectedAuthor(null);
+      setYear("");
+    } catch (error) {
+      console.error("Error updating author:", error);
+    }
   };
 
   return (
@@ -102,8 +105,8 @@ const Authors = ({ show }) => {
           <label>Author</label>
           <Select
             value={selectedAuthor}
-            onChange={setSelectedAuthor} // Manejar la selección
-            options={authorOptions} // Pasar las opciones
+            onChange={setSelectedAuthor}
+            options={authorOptions}
             placeholder="Select an author..."
           />
         </div>
