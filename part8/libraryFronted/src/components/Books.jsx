@@ -26,14 +26,11 @@ const ME = gql`
 const Books = ({ show }) => {
   const [selectedGenre, setSelectedGenre] = useState(null); // Género seleccionado
   const [showAllGenres, setShowAllGenres] = useState(true); // Estado para controlar la visualización de todos los géneros
-
-  // Consulta de todos los libros con el género filtrado
-  const { data: booksData, loading: booksLoading, error: booksError } = useQuery(ALL_BOOKS_BY_GENRE, {
+  const { data: booksData, loading: booksLoading, error: booksError, refetch } = useQuery(ALL_BOOKS_BY_GENRE, {
     variables: { genre: selectedGenre }, // Enviamos el género como variable de consulta
     fetchPolicy: "network-only", // Evitar usar caché
   });
 
-  // Consulta para obtener el género favorito del usuario
   const { data: meData, loading: meLoading, error: meError } = useQuery(ME);
 
   if (booksLoading || meLoading) {
@@ -58,40 +55,43 @@ const Books = ({ show }) => {
   // Obtener el género favorito del usuario
   const favoriteGenre = meData?.me?.favoriteGenre;
 
+  // Función para manejar la selección de género
+  const handleGenreSelect = (genre) => {
+    setShowAllGenres(false); // Desactivar mostrar todos los géneros
+    setSelectedGenre(genre); // Establecer el género seleccionado
+    refetch(); // Refrescar los datos de libros cuando se selecciona un género
+  };
+
+  // Función para mostrar todos los géneros
+  const showAllBooks = () => {
+    setShowAllGenres(true); // Mostrar todos los géneros
+    setSelectedGenre(null); // Reiniciar género seleccionado
+    refetch(); // Refrescar los datos de libros
+  };
+
+  // Función para mostrar solo los libros del género favorito del usuario
+  const showFavoriteGenre = () => {
+    setShowAllGenres(false); // Desactivar mostrar todos los géneros
+    setSelectedGenre(favoriteGenre); // Filtrar por el género favorito
+    refetch(); // Refrescar los datos de libros
+  };
+
   return (
     <div>
       <h2>Books</h2>
 
       {/* Mostrar los botones para los géneros */}
       <div>
-        <button
-          onClick={() => {
-            setShowAllGenres(true); // Mostrar todos los géneros
-            setSelectedGenre(null); // Reiniciar género seleccionado
-          }}
-        >
-          All genres
-        </button>
+        <button onClick={showAllBooks}>All genres</button>
         {genres.map((genre) => (
-          <button
-            key={genre}
-            onClick={() => {
-              setShowAllGenres(false); // Desactivar mostrar todos los géneros
-              setSelectedGenre(genre); // Establecer el género seleccionado
-            }}
-          >
+          <button key={genre} onClick={() => handleGenreSelect(genre)}>
             {genre}
           </button>
         ))}
 
         {/* Botón para mostrar solo los libros del género favorito del usuario */}
         {favoriteGenre && (
-          <button
-            onClick={() => {
-              setShowAllGenres(false); // Desactivar mostrar todos los géneros
-              setSelectedGenre(favoriteGenre); // Filtrar por el género favorito
-            }}
-          >
+          <button onClick={showFavoriteGenre}>
             Favorite Genre
           </button>
         )}
