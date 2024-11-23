@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { useApolloClient } from "@apollo/client";
 
 const LOGIN = gql`
   mutation login($username: String!, $password: String!) {
@@ -15,6 +16,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [login] = useMutation(LOGIN);
   const navigate = useNavigate();
+  const client = useApolloClient(); // Obtener el cliente de Apollo
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -25,7 +27,9 @@ const Login = () => {
       });
       localStorage.setItem("token", data.login.value); // Almacenar el token
       console.log("Token saved in localStorage:", data.login.value);
-      navigate("/"); // Redirigir a la página principal después de iniciar sesión
+
+      await client.resetStore(); // Limpiar y reiniciar el caché después del login
+      navigate("/"); // Redirigir a la página principal
     } catch (error) {
       console.error("Error al iniciar sesión:", error.message);
     }

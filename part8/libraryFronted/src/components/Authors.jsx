@@ -21,21 +21,19 @@ const EDIT_AUTHOR = gql`
   }
 `;
 
-const Authors = ({ show }) => {
+const Authors = () => {
   const [selectedAuthor, setSelectedAuthor] = useState(null); // Autor seleccionado
   const [year, setYear] = useState("");
 
+  // Consulta para obtener todos los autores
   const { loading, error, data } = useQuery(ALL_AUTHORS, {
-    fetchPolicy: 'network-only', // Asegurarse de que no se use cache
+    fetchPolicy: "network-only", // Asegurarse de que no se use caché
   });
 
+  // Mutación para editar el año de nacimiento del autor
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }], // Refrescar la consulta
+    refetchQueries: [{ query: ALL_AUTHORS }], // Refrescar la consulta de autores después de editar
   });
-
-  if (!show) {
-    return null;
-  }
 
   if (loading) {
     return <div>Loading authors...</div>;
@@ -50,12 +48,13 @@ const Authors = ({ show }) => {
     return <div>No authors found</div>;
   }
 
-
+  // Opciones para el selector de autores
   const authorOptions = data.allAuthors.map((author) => ({
     value: author.name,
     label: author.name,
   }));
 
+  // Manejador del envío del formulario
   const submit = async (event) => {
     event.preventDefault();
 
@@ -72,6 +71,7 @@ const Authors = ({ show }) => {
         },
       });
 
+      // Limpiar el formulario después de actualizar
       setSelectedAuthor(null);
       setYear("");
     } catch (error) {
@@ -81,25 +81,29 @@ const Authors = ({ show }) => {
 
   return (
     <div>
-      <h2>authors</h2>
+      <h2>Authors</h2>
+      {/* Tabla de autores */}
       <table>
-        <tbody>
+        <thead>
           <tr>
-            <th></th>
-            <th>born</th>
-            <th>books</th>
+            <th>Author</th>
+            <th>Born</th>
+            <th>Books</th>
           </tr>
+        </thead>
+        <tbody>
           {data.allAuthors.map((a) => (
             <tr key={a.name}>
               <td>{a.name}</td>
-              <td>{a.born || "unknown"}</td>
+              <td>{a.born || "Unknown"}</td>
               <td>{a.bookCount}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h3>Set birth year</h3>
+      {/* Formulario para establecer el año de nacimiento */}
+      <h3>Set Birth Year</h3>
       <form onSubmit={submit}>
         <div>
           <label>Author</label>
@@ -111,14 +115,14 @@ const Authors = ({ show }) => {
           />
         </div>
         <div>
-          <label>Year of birth</label>
+          <label>Year of Birth</label>
           <input
             type="number"
             value={year}
             onChange={(e) => setYear(e.target.value)}
           />
         </div>
-        <button type="submit">Update author</button>
+        <button type="submit">Update Author</button>
       </form>
     </div>
   );

@@ -3,8 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { ApolloClient, ApolloProvider, InMemoryCache, HttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./components/Login.jsx";
+import { BrowserRouter as Router } from "react-router-dom";  // Router se maneja solo aquí
 
 const httpLink = new HttpLink({
   uri: 'http://localhost:4000/graphql',
@@ -27,11 +26,8 @@ const client = new ApolloClient({
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ApolloProvider client={client}>
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
+    <Router>  {/* Aseguramos que las rutas son gestionadas aquí */}
+      <App />   {/* Aquí se renderiza el componente App */}
     </Router>
   </ApolloProvider>
 );
