@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint ./src/**/*.{js,jsx} App.js --no-error-on-unmatched-pattern"
   },
   "dependencies": {
     "expo": "~52.0.15",
@@ -15,7 +16,12 @@
     "react-native": "0.76.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@babel/eslint-parser": "^7.25.9",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^9.16.0",
+    "eslint-define-config": "^2.1.0",
+    "eslint-plugin-react": "^7.37.2"
   },
   "private": true
 }
