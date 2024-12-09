@@ -11,15 +11,17 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
-    "expo": "~52.0.15",
+    "expo": "^52.0.17",
     "expo-status-bar": "~2.0.0",
     "react": "18.3.1",
     "react-dom": "^18.3.1",
     "react-native": "0.76.3",
-    "react-native-web": "^0.19.13"
+    "react-native-web": "^0.19.13",
+    "react-router-native": "^6.28.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@expo/webpack-config": "^19.0.1",
     "eslint": "^8.57.0",
     "eslint-config-expo": "~8.0.1",
     "eslint-config-prettier": "^9.1.0",

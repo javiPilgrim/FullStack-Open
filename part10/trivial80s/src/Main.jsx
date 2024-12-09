@@ -1,7 +1,15 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  TouchableHighlight,
+  Alert,
+  StyleSheet,
+} from "react-native";
+import { Route, Routes, Navigate } from "react-router-native";
 import RepositoryList from "./components/RepositoryList";
 import AppBar from "./components/AppBar";
+import SignIn from "./components/SignIn";
 
 const styles = StyleSheet.create({
   container: {
@@ -10,13 +18,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const App = () => {
+const Main = () => {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, padding: 20 }}>
       <AppBar />
-      <RepositoryList />
+      <Routes>
+        <Route path="/" element={<RepositoryList />} />
+        <Route path="/signin" element={<SignIn />} />
+        {/* Reemplaza Redirect con Navigate */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </View>
   );
 };
 
-export default App;
+export default Main;

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
+import { useNavigate } from "react-router-native";
 import AppBarTab from "./AppBarTab";
 import theme from "../theme";
 
@@ -13,9 +14,13 @@ const styles = StyleSheet.create({
 });
 
 const AppBar = () => {
+
+  const navigate = useNavigate(); // Hook para navegación
+
   return (
     <View style={styles.container}>
-      <AppBarTab title="Repositorios" onPress={() => {}} />
+      <AppBarTab title="Sign In" onPress={() => navigate("/signin")} />
+      <AppBarTab title="Repositorios" onPress={() => navigate("/")} />
     </View>
   );
 };
